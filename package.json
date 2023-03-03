@@ -1,0 +1,17 @@
+{
+    "name": "voir",
+    "version": "0.1.0",
+    "description": "It is a framework to develop applications in a more controlled way with tabrisjs",
+    "main": "index.js",
+    "keywords": [
+        "voir",
+        "tabrisjs",
+        "native",
+        "mobile",
+        "android",
+        "ios",
+        "cross-platform"
+    ],
+    "author": "hicode",
+    "license": "MIT"
+}
