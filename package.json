@@ -1,10 +1,11 @@
 {
-    "name": "voir",
+    "name": "voir-native",
     "version": "0.1.0",
     "description": "It is a framework to develop applications in a more controlled way with tabrisjs",
     "main": "index.js",
     "keywords": [
         "voir",
+        "voir-native",
         "tabrisjs",
         "native",
         "mobile",
@@ -12,6 +13,9 @@
         "ios",
         "cross-platform"
     ],
+    "dependencies": {
+        "tabris": "~3.9.0"
+    },
     "author": "hicode",
-    "license": "MIT"
+    "license": "BSD 3-Clause"
 }

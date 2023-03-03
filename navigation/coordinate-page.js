@@ -82,27 +82,6 @@ var CoordinatePageComponent = /** @class */ (function (_super) {
         setTimeout(function () { return resolveParameter(widgets); }, 0);
         return sup;
     };
-    CoordinatePageComponent.prototype.navigationController = function (widgets) {
-        var page = widgets.find(function (widget) { return widget instanceof tabris_1.Page; });
-        var actions = widgets.filter(function (widget) {
-            return widget instanceof tabris_1.Action || widget instanceof tabris_1.SearchAction;
-        });
-        var info = ctxPages.get(page);
-        if (page && actions.length && info.actions === null) {
-            info.actions = actions;
-        }
-    };
-    CoordinatePageComponent.prototype.resolveParameter = function ($widgets) {
-        var widgets = $widgets.length > 1
-            ? $widgets
-            : Array.isArray($widgets[0])
-                ? $widgets.shift()
-                : $widgets;
-        if (widgets.some(function (widget) { return Array.isArray(widget); }))
-            throw new Error("error parameter");
-        if (Array.isArray(widgets) && widgets.length > 0)
-            this.navigationController(widgets);
-    };
     return CoordinatePageComponent;
 }(tabris_1.NavigationView));
 exports.CoordinatePageComponent = CoordinatePageComponent;
@@ -128,6 +107,7 @@ function resolveParameter($widgets) {
         navigationController(widgets);
 }
 function ProxyCoordinatePage(props) {
+    if (props === void 0) { props = {}; }
     return new CoordinatePageComponent(props);
 }
 /**

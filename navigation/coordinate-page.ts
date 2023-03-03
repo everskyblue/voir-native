@@ -79,36 +79,6 @@ class CoordinatePageComponent extends NavigationView {
         setTimeout(() => resolveParameter(widgets), 0);
         return sup;
     }
-
-    navigationController(widgets: TypeWidget) {
-        const page: Page = widgets.find(
-            (widget: TypeChild) => widget instanceof Page
-        );
-
-        const actions = widgets.filter(
-            (widget: TypeChild) =>
-                widget instanceof Action || widget instanceof SearchAction
-        );
-
-        const info = ctxPages.get(page);
-
-        if (page && actions.length && info.actions === null) {
-            info.actions = actions;
-        }
-    }
-
-    resolveParameter($widgets: TypeWidget) {
-        let widgets =
-            $widgets.length > 1
-                ? $widgets
-                : Array.isArray($widgets[0])
-                ? $widgets.shift()
-                : $widgets;
-        if (widgets.some((widget: TypeChild) => Array.isArray(widget)))
-            throw new Error("error parameter");
-        if (Array.isArray(widgets) && widgets.length > 0)
-            this.navigationController(widgets);
-    }
 }
 
 function navigationController(widgets: TypeWidget) {
@@ -142,7 +112,7 @@ function resolveParameter($widgets: TypeWidget) {
 }
 
 function ProxyCoordinatePage(
-    props: Properties<NavigationView>
+    props: Properties<NavigationView> = {}
 ): CoordinatePageComponent {
     return new CoordinatePageComponent(props);
 }

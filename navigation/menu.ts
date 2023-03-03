@@ -6,7 +6,6 @@ import {
     Row,
     Composite,
     ScrollView,
-    Stack,
 } from "tabris";
 
 type MenuItemOf = MenuItem;
