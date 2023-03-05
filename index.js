@@ -1,20 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CoordinatePageComponent = exports.CoordinatePage = exports.menuDrawer = void 0;
-var tabris_1 = require("tabris");
-var navigation;
-tabris_1.contentView.on("addChild", function (_a) {
-    var child = _a.child;
+const tabris_1 = require("tabris");
+let navigation;
+tabris_1.contentView.on("addChild", ({ child }) => {
     if (child instanceof tabris_1.NavigationView && !navigation) {
         navigation = child;
     }
 });
-function addView() {
-    var widgets = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-        widgets[_i] = arguments[_i];
-    }
-    return navigation.append.apply(navigation, widgets);
+function addView(...widgets) {
+    return navigation.append(...widgets);
 }
 exports.default = addView;
 var menu_1 = require("./navigation/menu");
