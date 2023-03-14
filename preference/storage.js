@@ -6,12 +6,12 @@ if (!localStorage.getItem(exports.name_key_pref)) {
     localStorage.setItem(exports.name_key_pref, "{}");
 }
 exports.$preference = JSON.parse(localStorage.getItem(exports.name_key_pref));
-var setPreference = function (key, value) {
+const setPreference = (key, value) => {
     exports.$preference[key] = value;
     localStorage.setItem(exports.name_key_pref, JSON.stringify(exports.$preference));
 };
 exports.setPreference = setPreference;
-var getValuePreference = function (key) { return exports.$preference[key]; };
+const getValuePreference = (key) => exports.$preference[key];
 exports.getValuePreference = getValuePreference;
-var existsKeyPreference = function (key) { return key in exports.$preference; };
+const existsKeyPreference = (key) => key in exports.$preference;
 exports.existsKeyPreference = existsKeyPreference;

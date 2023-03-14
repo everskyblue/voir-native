@@ -22,9 +22,5 @@ function addView(...widgets: (Page | Action | SearchAction)[]) {
 }
 
 export default addView;
-export { menuDrawer } from "./navigation/menu";
-export type { MenuItemOf } from "./navigation/menu";
-export {
-    CoordinatePage,
-    CoordinatePageComponent,
-} from "./navigation/CoordinatePage";
+export * from "./navigation";
+export * from "./preference";

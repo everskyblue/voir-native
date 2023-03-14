@@ -1,24 +1,29 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CoordinatePageComponent = exports.CoordinatePage = exports.menuDrawer = void 0;
-var tabris_1 = require("tabris");
-var navigation;
-tabris_1.contentView.on("addChild", function (_a) {
-    var child = _a.child;
+const tabris_1 = require("tabris");
+let navigation;
+tabris_1.contentView.on("addChild", ({ child }) => {
     if (child instanceof tabris_1.NavigationView && !navigation) {
         navigation = child;
     }
 });
-function addView() {
-    var widgets = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-        widgets[_i] = arguments[_i];
-    }
-    return navigation.append.apply(navigation, widgets);
+function addView(...widgets) {
+    return navigation.append(...widgets);
 }
 exports.default = addView;
-var menu_1 = require("./navigation/menu");
-Object.defineProperty(exports, "menuDrawer", { enumerable: true, get: function () { return menu_1.menuDrawer; } });
-var CoordinatePage_1 = require("./navigation/CoordinatePage");
-Object.defineProperty(exports, "CoordinatePage", { enumerable: true, get: function () { return CoordinatePage_1.CoordinatePage; } });
-Object.defineProperty(exports, "CoordinatePageComponent", { enumerable: true, get: function () { return CoordinatePage_1.CoordinatePageComponent; } });
+__exportStar(require("./navigation"), exports);
+__exportStar(require("./preference"), exports);
