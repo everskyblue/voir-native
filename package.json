@@ -1,6 +1,6 @@
 {
     "name": "voir-native",
-    "version": "0.2.2",
+    "version": "0.2.0",
     "description": "It is a framework to develop applications in a more controlled way with tabrisjs",
     "main": "index.js",
     "keywords": [
@@ -15,6 +15,11 @@
     ],
     "dependencies": {
         "tabris": "~3.9.0"
+    },
+    "homepage": "https://github.com/everskyblue/voir-native#readme",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/everskyblue/voir-native"
     },
     "author": "hicode",
     "license": "BSD 3-Clause"
