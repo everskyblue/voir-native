@@ -27,4 +27,4 @@ export type { MenuItemOf } from "./navigation/menu";
 export {
     CoordinatePage,
     CoordinatePageComponent,
-} from "./navigation/coordinate-page";
+} from "./navigation/CoordinatePage";
