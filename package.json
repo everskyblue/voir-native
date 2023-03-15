@@ -14,7 +14,8 @@
         "cross-platform"
     ],
     "dependencies": {
-        "tabris": "~3.9.0"
+        "tabris": "~3.9.0",
+        "string-tocapitalize": "~1.0.0"
     },
     "homepage": "https://github.com/everskyblue/voir-native#readme",
     "repository": {
