@@ -5,3 +5,4 @@ export * from './SwitchPreference';
 export * from './TextPreference';
 export { default as PreferenceScreen } from './PreferenceScreen';
 export * from './storage';
+export * from './ListPreference'

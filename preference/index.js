@@ -24,3 +24,4 @@ __exportStar(require("./TextPreference"), exports);
 var PreferenceScreen_1 = require("./PreferenceScreen");
 Object.defineProperty(exports, "PreferenceScreen", { enumerable: true, get: function () { return PreferenceScreen_1.default; } });
 __exportStar(require("./storage"), exports);
+__exportStar(require("./ListPreference"), exports);

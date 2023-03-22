@@ -7,19 +7,26 @@ class Checked extends AbstractItemPreference_1.default {
     constructor(props) {
         var _a;
         let checkButton;
-        const onSelect = props.onSelect;
-        props.onSelect = () => (checkButton.checked = !checkButton.checked);
+        const originalOnSelect = props.onSelect;
+        props.onSelect = () => checkButton && (checkButton.checked = !checkButton.checked);
         super(props);
+        this.originalOnSelect = originalOnSelect;
         checkButton = this._getButton({
             right: 0,
             centerY: true,
             checked: (_a = (0, storage_1.getValuePreference)(this.key)) !== null && _a !== void 0 ? _a : this.value,
         });
+        if (typeof checkButton !== "undefined") {
+            this.addListener(checkButton, originalOnSelect);
+            this.append(checkButton);
+        }
+    }
+    addListener(checkButton, originalOnSelect) {
         checkButton.on("checkedChanged", () => {
             (0, storage_1.setPreference)(this.key, checkButton.checked);
-            typeof onSelect === "function" && onSelect.call(this);
+            typeof originalOnSelect === "function" &&
+                originalOnSelect.call(this);
         });
-        this.append(checkButton);
     }
 }
 exports.Checked = Checked;
