@@ -1,8 +1,11 @@
 # Voir Native
+<p align="center">
 
-[Voir Native](./logo-voir.svg 'voir')
+![Voir Native](./logo-voir.png 'voir native')
 
-It is a framework to develop android and ios applications in a more organized way with tabrisjs
+</p>
+
+<p align="center">It is a framework to develop android and ios applications in a more organized way with tabrisjs</p>
 
 ## How To Use
 
