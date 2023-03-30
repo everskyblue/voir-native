@@ -3,6 +3,9 @@
     "version": "0.2.1",
     "description": "It is a framework to develop applications in a more controlled way with tabrisjs",
     "main": "index.js",
+    "scripts": {
+        "start": "tsc -p . -w"
+    },
     "keywords": [
         "voir",
         "voir-native",
