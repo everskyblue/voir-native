@@ -1,11 +1,6 @@
 # Voir Native
 <p align="center" style="text-align:center">
-<a href="#" target="_blank">
-
-![Voir Native](./logo-voir.png 'voir native')
-
-
-</a>
+<img src="./logo-voir.png" alt="voir native" title="voir native">
 </p>
 
 <p align="center">It is a framework to develop android and ios applications in a more organized way with tabrisjs</p>
