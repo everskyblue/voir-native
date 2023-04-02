@@ -1,14 +1,15 @@
 {
     "compilerOptions": {
         "baseUrl": ".",
+        "outDir": "dist",
         "target": "ES6",
         "module": "CommonJS",
-        "removeComments": true,
+        "removeComments": false,
         "noImplicitAny": true,
         "lib": ["ES2017"],
         "declaration": true,
         "declarationDir": "./types"
     },
-    "include": ["**/*", "**/*"],
+    "include": ["src/**/*"],
     "exclude": ["node_modules", "./types"]
 }
