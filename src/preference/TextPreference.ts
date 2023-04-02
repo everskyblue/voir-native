@@ -2,7 +2,7 @@ import { TextView, Properties } from "tabris";
 import ItemPreference from "./AbstractItemPreference";
 import { createProxies } from "../utils/proxy";
 
-function ProxyTextPreference(props: Properties<TextView>) {
+function ProxyTextPreference(props: Properties<TextPreferenceComponent>) {
     return new TextPreferenceComponent(props);
 }
 

@@ -1,4 +1,9 @@
-import { LayoutData, RadioButton, Properties, RadioButtonSelectEvent } from "tabris";
+import {
+    LayoutData,
+    RadioButton,
+    Properties,
+    RadioButtonSelectEvent,
+} from "tabris";
 import { Checked } from "./AbstractCheked";
 import { createProxies } from "../utils/proxy";
 import defineProperty from "../utils/define-property";
@@ -27,6 +32,8 @@ export class ListPreferenceComponent extends Checked {
     constructor(
         props: Properties<ListPreferenceComponent> & { onSelect?: any }
     ) {
+        const onSelect = props.onSelect;
+
         super(props);
 
         this.onSelect(() => {
@@ -51,8 +58,8 @@ export class ListPreferenceComponent extends Checked {
                         }).onSelect((e: RadioButtonSelectEvent) => {
                             if (e.checked) {
                                 setPreference(this.key, index);
-                                typeof props.onSelect === "function" &&
-                                    props.onSelect.call(this, e);
+                                typeof onSelect === "function" &&
+                                    onSelect.call(this, e);
                             }
                         });
 
