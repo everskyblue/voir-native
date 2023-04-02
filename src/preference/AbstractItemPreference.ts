@@ -1,6 +1,5 @@
 import "string-tocapitalize";
-import { Composite, TextView } from "tabris";
-import type { Properties, WidgetTapEvent } from "tabris";
+import { Composite, TextView, Properties, WidgetTapEvent } from "tabris";
 import { setPreference, existsKeyPreference } from "./storage";
 import defineProperty from "../utils/define-property";
 
@@ -9,7 +8,7 @@ const adjustCompactText = {
     right: "10%",
 };
 
-interface PreferenceParams {
+export interface PreferenceParams {
     key: string;
     value: string | number | boolean;
     title: string;

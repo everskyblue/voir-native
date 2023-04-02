@@ -3,6 +3,6 @@ export { default as AbstractItemPreference } from './AbstractItemPreference';
 export * from './CheckBoxPreference';
 export * from './SwitchPreference';
 export * from './TextPreference';
-export { default as PreferenceScreen } from './PreferenceScreen';
+export * from './PreferenceScreen';
 export * from './storage';
 export * from './ListPreference'

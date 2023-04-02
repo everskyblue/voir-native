@@ -1,8 +1,7 @@
-# Voir Native
 <p align="center" style="text-align:center">
 <img src="./logo-voir.png" alt="voir native" title="voir native">
 </p>
-
+<h1 align="center">Voir Native</h1>
 <p align="center">It is a framework to develop android and ios applications in a more organized way with tabrisjs</p>
 
 ## How To Use

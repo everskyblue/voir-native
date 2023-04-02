@@ -1,5 +1,4 @@
-import { Switch } from "tabris";
-import type { Properties } from "tabris";
+import { Switch, Properties } from "tabris";
 import { createProxies } from "../utils/proxy";
 import { Checked } from "./AbstractCheked";
 

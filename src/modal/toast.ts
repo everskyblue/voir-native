@@ -1,11 +1,10 @@
 import {
     sizeMeasurement,
-    device,
     TextView,
     Composite,
     contentView,
+    Properties,
 } from "tabris";
-import type { Properties } from "tabris";
 import AnimationTime from "./animation-time";
 import { animate } from "./animation";
 

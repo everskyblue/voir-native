@@ -1,5 +1,4 @@
-import { CheckBox } from "tabris";
-import type { Properties } from "tabris";
+import { CheckBox, Properties } from "tabris";
 import { createProxies } from "../utils/proxy";
 import { Checked } from "./AbstractCheked";
 

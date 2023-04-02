@@ -1,5 +1,4 @@
-import { TextView } from "tabris";
-import type { Properties } from "tabris";
+import { TextView, Properties } from "tabris";
 import ItemPreference from "./AbstractItemPreference";
 import { createProxies } from "../utils/proxy";
 

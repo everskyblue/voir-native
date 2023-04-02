@@ -1,21 +1,48 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const tabris_1 = require("tabris");
-const animation_1 = require("./animation");
-class EventModal extends tabris_1.EventObject {
-}
-class Modal {
-    constructor(attrs = {}) {
-        const buttons = [];
-        let buttonListenerAccept;
-        let buttonListenerCancel;
+import {
+    Button,
+    Color,
+    Composite,
+    EventObject,
+    LayoutData,
+    Listeners,
+    ScrollView,
+    TextView,
+    contentView,
+    Widget,
+    AnyWidget,
+    Properties,
+} from "tabris";
+import { animateHidden, animateShow } from "./animation";
+
+class EventModal extends EventObject<any> {}
+
+export default class Modal {
+    [k: string]: any;
+
+    remove: () => any;
+    show: () => any;
+    setButtonAccept: (name: string) => Listeners<{ target: Button }>;
+    setButtonCancel: (name: string) => Listeners<{ target: Button }>;
+    addView: (...view: Widget<any>[]) => any;
+    removeView: () => any;
+    removeButtons: () => any;
+
+    constructor(attrs: any = {}) {
+        const buttons: Button[] = [];
+        //- iteracion
+        let buttonListenerAccept: Listeners<{ target: Button }>;
+        let buttonListenerCancel: Listeners<{ target: Button }>;
+
         let isAddButtons = false;
         let isDetach = false;
         let isShow = false;
-        const { width: contentWidth } = tabris_1.contentView.bounds;
+
+        // ui size
+        const { width: contentWidth } = contentView.bounds;
         const { screenWidth: deviceWidth } = device;
         const maxSize = 560;
-        const properties_modal_container = {
+
+        const properties_modal_container: Properties<Composite> = {
             elevation: 24,
             centerY: true,
             padding: 10,
@@ -24,109 +51,136 @@ class Modal {
             background: "white",
             id: "modal-container",
         };
+
         if (maxSize > deviceWidth || maxSize > contentWidth) {
             Object.assign(properties_modal_container, {
                 left: 24,
                 right: 24,
             });
-        }
-        else {
+        } else {
             Object.assign(properties_modal_container, {
                 width: maxSize,
             });
         }
-        const modalWrap = new tabris_1.Composite({
+
+        const modalWrap = new Composite({
             left: 0,
             right: 0,
             top: 0,
             bottom: 0,
             opacity: 1,
             highlightOnTouch: false,
-            background: new tabris_1.Color(0, 0, 0, 50),
-        }).onTap((e) => e.preventDefault());
-        const modal_container = new tabris_1.Composite(properties_modal_container).appendTo(modalWrap);
+            background: new Color(0, 0, 0, 50),
+        }).onTap((e: any) => e.preventDefault());
+
+        const modal_container = new Composite(
+            properties_modal_container
+        ).appendTo(modalWrap);
+
         if ("title" in attrs) {
-            modal_container.append(new tabris_1.TextView({
-                id: "modal-title",
-                font: "medium 18px",
-                padding: 10,
-                left: 0,
-                right: 0,
-                text: attrs.title.toCapitalize(),
-            }));
+            modal_container.append(
+                new TextView({
+                    id: "modal-title",
+                    font: "medium 18px",
+                    padding: 10,
+                    left: 0,
+                    right: 0,
+                    text: attrs.title.toCapitalize(),
+                })
+            );
         }
-        const modal_content = new tabris_1.Composite({
+
+        const modal_content = new Composite({
             top: "#modal-title",
-            bottom: tabris_1.LayoutData.prev,
+            bottom: LayoutData.prev,
             right: 0,
             left: 0,
         });
-        const modal_content_scrollable = new tabris_1.ScrollView({
+
+        const modal_content_scrollable = new ScrollView({
             layoutData: "stretchX",
         }).appendTo(modal_content);
+
         modal_container.onBoundsChanged(({ value, target }) => {
-            const { height: contentViewHeight } = tabris_1.contentView.bounds;
+            const { height: contentViewHeight } = contentView.bounds;
+
             if (contentViewHeight < value.height) {
-                modal_container.layoutData = Object.assign(Object.assign({}, properties_modal_container), { height: value.height > contentViewHeight
-                        ? maxSize -
-                            (maxSize > contentViewHeight
-                                ? 20 + maxSize - contentViewHeight
-                                : 0)
-                        : maxSize > value.height
+                modal_container.layoutData = {
+                    ...properties_modal_container,
+                    height:
+                        value.height > contentViewHeight
+                            ? maxSize -
+                              (maxSize > contentViewHeight
+                                  ? 20 + maxSize - contentViewHeight
+                                  : 0)
+                            : maxSize > value.height
                             ? value.height
-                            : maxSize });
-                modal_content.layoutData = Object.assign({}, modal_content.layoutData);
+                            : maxSize,
+                };
+                modal_content.layoutData = {
+                    ...(modal_content.layoutData as any),
+                };
                 modal_content_scrollable.layoutData = "stretch";
             }
         });
+
         Object.defineProperty(this, "setButtonAccept", {
             configurable: false,
-            value: (text) => {
+            value: (text: string) => {
                 if (!buttonListenerAccept) {
                     buttonListenerAccept = createButton("accept", text);
                 }
                 return buttonListenerAccept;
             },
         });
+
         Object.defineProperty(this, "setButtonCancel", {
             configurable: false,
-            value: (text) => {
+            value: (text: string) => {
                 if (!buttonListenerCancel) {
                     buttonListenerCancel = createButton("cancel", text);
                 }
                 return buttonListenerCancel;
             },
         });
+
         Object.defineProperty(this, "addView", {
             configurable: false,
-            value: (...views) => modal_content_scrollable.append(views),
+            value: (...views: Widget<any>[]) =>
+                modal_content_scrollable.append(views),
         });
+
         Object.defineProperty(this, "show", {
             configurable: false,
-            value: (view) => {
+            value: (view: AnyWidget) => {
                 if (!isAddButtons) {
                     isAddButtons = true;
-                    modal_container.append(new tabris_1.Composite({
-                        layoutData: "stretchX",
-                        id: "buttons-modal",
-                        bottom: 0,
-                    }).append(buttons));
+                    modal_container.append(
+                        new Composite({
+                            layoutData: "stretchX",
+                            id: "buttons-modal",
+                            bottom: 0,
+                        }).append(buttons)
+                    );
                 }
+
                 if (!isShow || isDetach) {
                     isShow = true;
                     isDetach = false;
                     modal_container.append(modal_content);
-                    tabris_1.contentView.append(modalWrap);
-                    (0, animation_1.animateShow)(modal_container, 0, 100);
+                    contentView.append(modalWrap);
+                    animateShow(modal_container, 0, 100);
                 }
             },
         });
+
         Object.defineProperty(this, "removeView", {
             configurable: false,
             value: () => {
                 return modal_content_scrollable.children().dispose();
             },
         });
+
         Object.defineProperty(this, "removeButtons", {
             configurable: false,
             value: () => {
@@ -136,31 +190,32 @@ class Modal {
                 });
             },
         });
+
         Object.defineProperty(this, "remove", {
             configurable: false,
             value: () => {
-                if (isDetach)
-                    return;
-                (0, animation_1.animateHidden)(modalWrap, 0, 250).then(() => {
+                if (isDetach) return;
+                //para que se pueda usar en un contexto de mas alcanza a solo una llamada
+                animateHidden(modalWrap, 0, 250).then(() => {
                     isDetach = true;
                     isShow = false;
                     modalWrap.detach();
                 });
             },
         });
-        function createButton(type, text) {
-            const btn = new tabris_1.Button({
+
+        function createButton(type: string, text: string) {
+            const btn = new Button({
                 text,
                 top: buttons.length === 0 ? "prev() 20" : "auto",
                 right: buttons.length === 0 ? 0 : "prev()",
                 bottom: 0,
                 style: "text",
             });
-            const event = new tabris_1.Listeners(btn, type);
+            const event = new Listeners<{ target: Button }>(btn, type);
             btn.onTap(() => event.trigger(new EventModal()));
             buttons.push(btn);
             return event;
         }
     }
 }
-exports.default = Modal;

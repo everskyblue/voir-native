@@ -1,6 +1,14 @@
-import { NavigationView, drawer, Page, Action, SearchAction } from "tabris";
-import type { Properties, CompositeAddChildEvent } from "tabris";
+import {
+    NavigationView,
+    drawer,
+    Page,
+    Action,
+    Properties as PropertiesTabris,
+    SearchAction,
+    CompositeAddChildEvent,
+} from "tabris";
 import { createProxies } from "../utils/proxy";
+import { createInstance } from "../utils/helpers";
 
 type FirstExecAction = {
     actions: Array<Action | SearchAction> | null;
@@ -26,7 +34,7 @@ const ctxPages = new Map<Page, FirstExecAction>();
  * haciendo que la nueva pagina no tenga los menus anteriores
  */
 export class CoordinatePageComponent extends NavigationView {
-    constructor(props: Properties<NavigationView> = {}) {
+    constructor(props: PropertiesTabris<CoordinatePageComponent>) {
         super(props);
         this.on(
             "addChild",
@@ -72,7 +80,7 @@ export class CoordinatePageComponent extends NavigationView {
         );
 
         function setChangeEnabledDrawer(enable: boolean) {
-            if (props.drawerActionVisible) drawer.enabled = enable;
+            if (props?.drawerActionVisible) drawer.enabled = enable;
         }
     }
 
@@ -114,9 +122,12 @@ function resolveParameter($widgets: TypeWidget) {
 }
 
 function ProxyCoordinatePage(
-    props: Properties<NavigationView> = {}
+    props: PropertiesTabris<CoordinatePageComponent>
 ): CoordinatePageComponent {
-    return new CoordinatePageComponent(props);
+    return createInstance<CoordinatePageComponent>(
+        props,
+        CoordinatePageComponent
+    );
 }
 
 /**

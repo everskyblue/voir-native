@@ -1,12 +1,11 @@
-import { LayoutData, RadioButton, widgets } from "tabris";
-import type { Properties } from "tabris";
+import { LayoutData, RadioButton, Properties, RadioButtonSelectEvent } from "tabris";
 import { Checked } from "./AbstractCheked";
 import { createProxies } from "../utils/proxy";
 import defineProperty from "../utils/define-property";
 import { Modal } from "../modal";
 import { getValuePreference, setPreference } from "./storage";
 
-interface IEntry {
+export interface IEntry {
     id?: string;
     text: string;
     checked?: boolean;
@@ -25,7 +24,9 @@ export class ListPreferenceComponent extends Checked {
         return;
     }
 
-    constructor(props: Properties<ListPreferenceComponent>) {
+    constructor(
+        props: Properties<ListPreferenceComponent> & { onSelect?: any }
+    ) {
         super(props);
 
         this.onSelect(() => {
@@ -47,11 +48,11 @@ export class ListPreferenceComponent extends Checked {
                                 left: 0,
                                 right: 0,
                             },
-                        }).onSelect((e) => {
+                        }).onSelect((e: RadioButtonSelectEvent) => {
                             if (e.checked) {
                                 setPreference(this.key, index);
-                                typeof this.originalOnSelect === "function" &&
-                                    this.originalOnSelect(e);
+                                typeof props.onSelect === "function" &&
+                                    props.onSelect.call(this, e);
                             }
                         });
 
@@ -64,7 +65,9 @@ export class ListPreferenceComponent extends Checked {
                 );
             }
 
-            modal.setButtonAccept(this.textButtonAccept.toUpperCase()).addListener(cancel.bind(modal));
+            modal
+                .setButtonAccept(this.textButtonAccept.toUpperCase())
+                .addListener(cancel.bind(modal));
             modal.show();
         });
 
