@@ -21,8 +21,8 @@ export default class Modal {
 
     remove: () => any;
     show: () => any;
-    setButtonAccept: (name: string) => Listeners<{ target: Button }>;
-    setButtonCancel: (name: string) => Listeners<{ target: Button }>;
+    setButtonAccept: (text: string) => Listeners<{ target: Button }>;
+    setButtonCancel: (text: string) => Listeners<{ target: Button }>;
     addView: (...view: Widget<any>[]) => any;
     removeView: () => any;
     removeButtons: () => any;
@@ -101,7 +101,7 @@ export default class Modal {
             layoutData: "stretchX",
         }).appendTo(modal_content);
 
-        modal_container.onBoundsChanged(({ value, target }) => {
+        modal_container.onBoundsChanged(({ value }) => {
             const { height: contentViewHeight } = contentView.bounds;
 
             if (contentViewHeight < value.height) {
@@ -152,7 +152,7 @@ export default class Modal {
 
         Object.defineProperty(this, "show", {
             configurable: false,
-            value: (view: AnyWidget) => {
+            value: () => {
                 if (!isAddButtons) {
                     isAddButtons = true;
                     modal_container.append(

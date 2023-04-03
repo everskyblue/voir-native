@@ -29,14 +29,16 @@ export function animateHidden(
         {
             delay,
             duration,
-            easing: "ease-in-out",
+            easing: "ease-out",
         }
     );
 }
 
-export function animate(element: Widget<any>, delay: number, duration: number) {
-    return Promise.all([
-        animateShow(element, delay, duration),
-        animateHidden(element, delay, duration),
-    ]);
+export async function animate(
+    element: Widget<any>,
+    delay: number,
+    duration: number
+) {
+    await animateShow(element, delay, 300);
+    await animateHidden(element, duration, duration);
 }

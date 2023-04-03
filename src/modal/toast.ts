@@ -11,7 +11,7 @@ import { animate } from "./animation";
 export default class Toast extends AnimationTime {
     show: (time: number) => any;
 
-    constructor(message: string) {
+    constructor(message: string, duration: number) {
         super();
 
         const size = sizeMeasurement.measureTextsSync([
@@ -47,11 +47,15 @@ export default class Toast extends AnimationTime {
 
         Object.defineProperty(this, "show", {
             configurable: false,
-            value: async (time: number) => {
-                contentView.append(modal as any);
-                await animate(modal, time, Toast.SHORT);
+            value: async () => {
+                contentView.append(modal);
+                await animate(modal, 0, duration);
                 modal.dispose();
             },
         });
+    }
+
+    static makeText(msg: string, duration: number = Toast.SHORT) {
+        return new Toast(msg, duration);
     }
 }
