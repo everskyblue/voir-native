@@ -14,15 +14,14 @@ class MenuItem extends tabris_1.Composite {
         });
     }
 }
-function menuDrawer(menu, eventSelectMenu) {
+function menuDrawer(menus, eventSelectMenu) {
     const layoutMenu = (0, tabris_1.ScrollView)({
         id: "scrollableLayoutMenuDrawer",
         top: tabris_1.Constraint.prev,
         left: 0,
         right: 0,
         bottom: 0,
-    }).append(Object.keys(menu).map((key) => {
-        const data = menu[key];
+    }).append(menus.map((data) => {
         const row = (0, tabris_1.Row)({
             layoutData: "stretch",
             alignment: "centerY",

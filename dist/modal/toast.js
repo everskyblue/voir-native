@@ -13,7 +13,7 @@ const tabris_1 = require("tabris");
 const animation_time_1 = require("./animation-time");
 const animation_1 = require("./animation");
 class Toast extends animation_time_1.default {
-    constructor(message) {
+    constructor(message, duration) {
         super();
         const size = tabris_1.sizeMeasurement.measureTextsSync([
             { text: message, font: "12px" },
@@ -37,12 +37,15 @@ class Toast extends animation_time_1.default {
         const modal = (0, tabris_1.Composite)(Object.assign({ background: "black", padding: 10, cornerRadius: 10, bottom: 30, opacity: 0 }, props)).append(textview);
         Object.defineProperty(this, "show", {
             configurable: false,
-            value: (time) => __awaiter(this, void 0, void 0, function* () {
+            value: () => __awaiter(this, void 0, void 0, function* () {
                 tabris_1.contentView.append(modal);
-                yield (0, animation_1.animate)(modal, time, Toast.SHORT);
+                yield (0, animation_1.animate)(modal, 0, duration);
                 modal.dispose();
             }),
         });
+    }
+    static makeText(msg, duration = Toast.SHORT) {
+        return new Toast(msg, duration);
     }
 }
 exports.default = Toast;

@@ -66,7 +66,7 @@ class Modal {
         const modal_content_scrollable = new tabris_1.ScrollView({
             layoutData: "stretchX",
         }).appendTo(modal_content);
-        modal_container.onBoundsChanged(({ value, target }) => {
+        modal_container.onBoundsChanged(({ value }) => {
             const { height: contentViewHeight } = tabris_1.contentView.bounds;
             if (contentViewHeight < value.height) {
                 modal_container.layoutData = Object.assign(Object.assign({}, properties_modal_container), { height: value.height > contentViewHeight
@@ -105,7 +105,7 @@ class Modal {
         });
         Object.defineProperty(this, "show", {
             configurable: false,
-            value: (view) => {
+            value: () => {
                 if (!isAddButtons) {
                     isAddButtons = true;
                     modal_container.append(new tabris_1.Composite({

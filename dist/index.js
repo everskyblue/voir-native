@@ -25,5 +25,6 @@ function addView(...widgets) {
     return navigation.append(...widgets);
 }
 exports.default = addView;
+__exportStar(require("./modal"), exports);
 __exportStar(require("./navigation"), exports);
 __exportStar(require("./preference"), exports);
