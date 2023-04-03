@@ -37,7 +37,7 @@ class MenuItem extends Composite {
 export type { MenuItemOf };
 
 export function menuDrawer(
-    menu: MenuOption,
+    menus: IMenuItemOption[],
     eventSelectMenu: (menu: MenuItem) => void
 ) {
     const layoutMenu = ScrollView({
@@ -47,8 +47,7 @@ export function menuDrawer(
         right: 0,
         bottom: 0,
     }).append(
-        (Object.keys(menu) as string[]).map((key: string) => {
-            const data = menu[key];
+        menus.map((data: IMenuItemOption) => {
             const row = Row({
                 layoutData: "stretch",
                 alignment: "centerY",

@@ -22,5 +22,6 @@ function addView(...widgets: (Page | Action | SearchAction)[]) {
 }
 
 export default addView;
+export * from "./modal";
 export * from "./navigation";
 export * from "./preference";
