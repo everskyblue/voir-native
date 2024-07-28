@@ -14,7 +14,7 @@ type MenuOption = {
     [key: string]: IMenuItemOption;
 };
 
-interface IMenuItemOption {
+export interface IMenuItemOption {
     id: string;
     text: string;
     image?: string;
@@ -33,20 +33,42 @@ class MenuItem extends Composite {
     }
 }
 
+export const DrawerMenuItem = (props: IMenuItemOption) => {
+    return ()=> props;
+}
+
+export const DrawerMenu = ({children}: any) => {
+    return ()=> {
+        const props: IMenuItemOption[] = [];
+        for (const child of children) {
+            if (typeof child === 'function') props.push(child());
+        }
+        return props;
+    };
+}
 
 export type { MenuItemOf };
 
-export function menuDrawer(
+export const menuDrawer = (
+    menus: IMenuItemOption[],
+    eventSelectMenu: (menu: MenuItem) => void
+) => {
+    console.warn('deprecated function [menuDrawer] use setMenuDrawer');
+    setMenuDrawer(menus, eventSelectMenu);
+}
+
+export function setMenuDrawer(
     menus: IMenuItemOption[],
     eventSelectMenu: (menu: MenuItem) => void
 ) {
-    const layoutMenu = ScrollView({
+    const scrollLayout = drawer.find('#scrollableLayoutMenuDrawer');
+    const layoutMenu = (scrollLayout.length !== 0 ? scrollLayout.only() as ScrollView : ScrollView({
         id: "scrollableLayoutMenuDrawer",
         top: Constraint.prev,
         left: 0,
         right: 0,
         bottom: 0,
-    }).append(
+    })).append(
         menus.map((data: IMenuItemOption) => {
             const row = Row({
                 layoutData: "stretch",
@@ -77,6 +99,6 @@ export function menuDrawer(
             });
         })
     );
-
-    drawer.append(layoutMenu);
+    
+    if (scrollLayout.length === 0) drawer.append(layoutMenu);
 }
