@@ -1,14 +1,17 @@
 import {
+    type EventObject,
+    type AnyWidget,
     NavigationView,
     drawer,
     Page,
     Action,
     Properties as PropertiesTabris,
     SearchAction,
-    CompositeAddChildEvent,
+    CompositeAddChildEvent
 } from "tabris";
 import { createProxies } from "../utils/proxy";
 import { createInstance } from "../utils/helpers";
+import { type IMenuItemOption, type Widget, setMenuDrawer } from "./menu";
 
 type FirstExecAction = {
     actions: Array<Action | SearchAction> | null;
@@ -34,8 +37,54 @@ const ctxPages = new Map<Page, FirstExecAction>();
  * haciendo que la nueva pagina no tenga los menus anteriores
  */
 export class CoordinatePageComponent extends NavigationView {
+    private _onActionSelect!: any;
+    private _onDrawerItemSelected!: any;
+    private _dataMenuDrawer!: any;
+    private _renderDrawerContent!: any;
+    
+    set renderDrawerContent(view: AnyWidget) {
+        this._renderDrawerContent = view;
+    }
+    
+    get renderDrawerContent() {
+       return this._renderDrawerContent;
+    }
+
+    set onActionSelect(event: (id: string, itemAction: Action) => void) {
+        this._onActionSelect = event;
+    }
+
+    get onActionSelect() {
+        return this._onActionSelect;
+    }
+
+    set menuDrawer(menu: ()=> IMenuItemOption[]) {
+        this._dataMenuDrawer = menu();
+    }
+
+    get menuDrawer() {
+        return this._dataMenuDrawer;
+    }
+
+    set onDrawerItemSelected(event: (id: string, itemAction: Action) => void) {
+        this._onDrawerItemSelected = event;
+    }
+
+    get onDrawerItemSelected() {
+        return this._onDrawerItemSelected;
+    }
+    
+    private _render() {
+        if (this.menuDrawer.length > 0) setMenuDrawer(this.menuDrawer, this.onDrawerItemSelected);
+    }
+
     constructor(props: PropertiesTabris<CoordinatePageComponent>) {
         super(props);
+        
+        if (props.drawerActionVisible) {
+            this._render();
+        }
+        
         this.on(
             "addChild",
             ({ child }: CompositeAddChildEvent<CoordinatePageComponent>) => {
@@ -86,12 +135,20 @@ export class CoordinatePageComponent extends NavigationView {
 
     append(...widgets: TypeWidget) {
         const sup = super.append(...widgets);
-        setTimeout(() => resolveParameter(widgets), 0);
+        setTimeout(() => {
+            const coord = resolveParameter(widgets)
+            if (coord && this._onActionSelect) {
+                for (const action of coord.actions) {
+                    if (action instanceof Action)
+                        action.onSelect(({ target }: EventObject<Action>) => this._onActionSelect(target));
+                }
+            }
+        }, 0);
         return sup;
     }
 }
 
-function navigationController(widgets: TypeWidget) {
+function fillExecAction(widgets: TypeWidget) {
     const page: Page = widgets.find(
         (widget: TypeChild) => widget instanceof Page
     );
@@ -106,6 +163,8 @@ function navigationController(widgets: TypeWidget) {
     if (page && actions.length && info.actions === null) {
         info.actions = actions;
     }
+
+    return info;
 }
 
 function resolveParameter($widgets: TypeWidget) {
@@ -113,12 +172,12 @@ function resolveParameter($widgets: TypeWidget) {
         $widgets.length > 1
             ? $widgets
             : Array.isArray($widgets[0])
-            ? $widgets.shift()
-            : $widgets;
+                ? $widgets.shift()
+                : $widgets;
     if (widgets.some((widget: TypeChild) => Array.isArray(widget)))
         throw new Error("error parameter");
     if (Array.isArray(widgets) && widgets.length > 0)
-        navigationController(widgets);
+        return fillExecAction(widgets);
 }
 
 function ProxyCoordinatePage(
