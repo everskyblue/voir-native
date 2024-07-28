@@ -1,4 +1,5 @@
 import {
+    type AnyWidget,
     drawer,
     Constraint,
     TextView,
@@ -33,11 +34,19 @@ class MenuItem extends Composite {
     }
 }
 
+/**
+ * @version 0.4
+ * no posee hijos y su padre es DrawerMenu
+ */
 export const DrawerMenuItem = (props: IMenuItemOption) => {
     return ()=> props;
 }
 
-export const DrawerMenu = ({children}: any) => {
+/**
+ * @version 0.4
+ * contenedor para DrawerMenuItem
+ */
+export const DrawerMenu = ({children}: {children: ReturnType<typeof DrawerMenuItem>[]}) => {
     return ()=> {
         const props: IMenuItemOption[] = [];
         for (const child of children) {
@@ -49,6 +58,10 @@ export const DrawerMenu = ({children}: any) => {
 
 export type { MenuItemOf };
 
+/**
+ * @deprecated 
+ * emite un warning desde la version 0.4
+ */
 export const menuDrawer = (
     menus: IMenuItemOption[],
     eventSelectMenu: (menu: MenuItem) => void
@@ -57,18 +70,30 @@ export const menuDrawer = (
     setMenuDrawer(menus, eventSelectMenu);
 }
 
-export function setMenuDrawer(
-    menus: IMenuItemOption[],
-    eventSelectMenu: (menu: MenuItem) => void
-) {
+function getScrollLayoutDrawer() {
     const scrollLayout = drawer.find('#scrollableLayoutMenuDrawer');
+    
     const layoutMenu = (scrollLayout.length !== 0 ? scrollLayout.only() as ScrollView : ScrollView({
         id: "scrollableLayoutMenuDrawer",
         top: Constraint.prev,
         left: 0,
         right: 0,
         bottom: 0,
-    })).append(
+    }));
+
+    if (scrollLayout.length === 0) drawer.append(layoutMenu);
+    
+    return layoutMenu;
+}
+
+/**
+ * @version 0.4
+ */
+export function setMenuDrawer(
+    menus: IMenuItemOption[],
+    eventSelectMenu: (menu: MenuItem) => void
+) {
+    const scrollLayout = getScrollLayoutDrawer().append(
         menus.map((data: IMenuItemOption) => {
             const row = Row({
                 layoutData: "stretch",
@@ -99,6 +124,21 @@ export function setMenuDrawer(
             });
         })
     );
-    
-    if (scrollLayout.length === 0) drawer.append(layoutMenu);
 }
+
+/**
+ * @version 0.4
+ */
+export function setContentDrawer(view: AnyWidget) {
+    const scrollLayout = getScrollLayoutDrawer();
+    const findContent = drawer.find('#voirContentDrawer');
+    const content = findContent.length === 0 ? Composite({
+            top: [Constraint.prev, 15],
+            left: 0,
+            right: 0,
+            id: 'voirContentDrawer',
+            padding: 8
+        }).append(view)
+        : findContent.only().append(view);
+    if (findContent.length === 0) scrollLayout.append(content);
+ }

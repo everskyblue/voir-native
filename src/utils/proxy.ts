@@ -60,7 +60,7 @@ export function createProxies<T extends Composite>(
                 target: Callable<T>,
                 argArray
             ): InstanceType<CallbackInstance<T>> {
-                return target(argArray[0]);
+                return new target(argArray[0]);
                 /*return new Proxy<InstanceType<CallbackInstance<T>>>(
                     target(argArray[0]),
                     {

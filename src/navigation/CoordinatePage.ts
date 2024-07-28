@@ -11,7 +11,7 @@ import {
 } from "tabris";
 import { createProxies } from "../utils/proxy";
 import { createInstance } from "../utils/helpers";
-import { type IMenuItemOption, type Widget, setMenuDrawer } from "./menu";
+import { type IMenuItemOption, type Widget, setMenuDrawer, setContentDrawer } from "./menu";
 
 type FirstExecAction = {
     actions: Array<Action | SearchAction> | null;
@@ -40,14 +40,14 @@ export class CoordinatePageComponent extends NavigationView {
     private _onActionSelect!: any;
     private _onDrawerItemSelected!: any;
     private _dataMenuDrawer!: any;
-    private _renderDrawerContent!: any;
+    private _contentDrawer!: any;
     
-    set renderDrawerContent(view: AnyWidget) {
-        this._renderDrawerContent = view;
+    set contentDrawer(view: AnyWidget) {
+        this._contentDrawer = view;
     }
     
-    get renderDrawerContent() {
-       return this._renderDrawerContent;
+    get contentDrawer() {
+       return this._contentDrawer;
     }
 
     set onActionSelect(event: (id: string, itemAction: Action) => void) {
@@ -76,6 +76,7 @@ export class CoordinatePageComponent extends NavigationView {
     
     private _render() {
         if (this.menuDrawer.length > 0) setMenuDrawer(this.menuDrawer, this.onDrawerItemSelected);
+        if (this._contentDrawer) setContentDrawer(this._contentDrawer);
     }
 
     constructor(props: PropertiesTabris<CoordinatePageComponent>) {
@@ -85,16 +86,27 @@ export class CoordinatePageComponent extends NavigationView {
             this._render();
         }
         
+        /**
+         * @INFO
+         * ARREGLAR UN ERROR QUE SE GENERA CUANDO addView
+         * SE LLAMA VARIAS VECES AL AÑADIR ELEMENTOS
+         * EJEMPLO: addView(<Page />) addView(<Action />)
+         * ESTO PROVOCA NO OBTENER CORRECTAMENTE EL Action y SearchAction
+         */
         this.on(
             "addChild",
             ({ child }: CompositeAddChildEvent<CoordinatePageComponent>) => {
+                if (child instanceof Action && this._onActionSelect) {
+                    child.onSelect(({ target }: EventObject<Action>) => this._onActionSelect(target));
+                }
+                
                 if (child instanceof Page) {
                     ctxPages.set(child, {
                         hidden: false,
                         actions: null,
                         isDisposed: false,
                     });
-
+                    
                     child.on("appear", () => {
                         const info = ctxPages.get(child);
                         if (typeof info === "object" && info.hidden) {
@@ -135,15 +147,7 @@ export class CoordinatePageComponent extends NavigationView {
 
     append(...widgets: TypeWidget) {
         const sup = super.append(...widgets);
-        setTimeout(() => {
-            const coord = resolveParameter(widgets)
-            if (coord && this._onActionSelect) {
-                for (const action of coord.actions) {
-                    if (action instanceof Action)
-                        action.onSelect(({ target }: EventObject<Action>) => this._onActionSelect(target));
-                }
-            }
-        }, 0);
+        setTimeout(() => resolveParameter(widgets), 0);
         return sup;
     }
 }
