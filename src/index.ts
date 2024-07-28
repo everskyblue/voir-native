@@ -37,7 +37,8 @@ abstract class VoirRender {
         const elms = [];
         
         if (typeof this.renderAction === 'function') {
-            elms.push(...Array.from(this.renderAction()));
+            const actions = this.renderAction();
+            if (actions) elms.push(...Array.from(actions));
         }
         
         addView(...elms, this.render());
