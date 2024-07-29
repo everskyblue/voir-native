@@ -17,4 +17,5 @@ export type CallbackInstance<View extends AnyWidget> = new (props: Attributes<Vi
 export type Callable<View extends AnyWidget> = (props?: Attributes<View>) => View;
 export type Callback<View extends AnyWidget> = CallbackInstance<View> | Callable<View>;
 export declare function createProxies<T extends Composite>(funReceivedProxy: Callback<T>, funAppend?: CallbackAppend): Callback<T>;
+export declare function factory<T = any>(fac: T): void;
 export {};

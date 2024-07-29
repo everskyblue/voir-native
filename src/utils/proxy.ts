@@ -57,9 +57,9 @@ export function createProxies<T extends Composite>(
         funReceivedProxy,
         {
             construct(
-                target: Callable<T>,
+                target: CallbackInstance<T>,
                 argArray
-            ): InstanceType<CallbackInstance<T>> {
+            ) {
                 return new target(argArray[0]);
                 /*return new Proxy<InstanceType<CallbackInstance<T>>>(
                     target(argArray[0]),
@@ -101,4 +101,10 @@ export function createProxies<T extends Composite>(
     );
 
     return ProxiesCallback;
+}
+
+export function factory<T = any>(fac: T) {
+    if (true) {
+        
+    }
 }

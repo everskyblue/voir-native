@@ -11,7 +11,7 @@ import {
 } from "tabris";
 import { createProxies } from "../utils/proxy";
 import { createInstance } from "../utils/helpers";
-import { type IMenuItemOption, type Widget, setMenuDrawer, setContentDrawer } from "./menu";
+import { type IMenuItemOption, type MenuItemOf, setMenuDrawer, setContentDrawer } from "./menu";
 
 type FirstExecAction = {
     actions: Array<Action | SearchAction> | null;
@@ -50,7 +50,7 @@ export class CoordinatePageComponent extends NavigationView {
        return this._contentDrawer;
     }
 
-    set onActionSelect(event: (id: string, itemAction: Action) => void) {
+    set onActionSelect(event: (itemAction: Action) => void) {
         this._onActionSelect = event;
     }
 
@@ -62,11 +62,11 @@ export class CoordinatePageComponent extends NavigationView {
         this._dataMenuDrawer = menu();
     }
 
-    get menuDrawer() {
+    get menuDrawer(): IMenuItemOption[] {
         return this._dataMenuDrawer;
     }
 
-    set onDrawerItemSelected(event: (id: string, itemAction: Action) => void) {
+    set onDrawerItemSelected(event: (item: MenuItemOf) => void) {
         this._onDrawerItemSelected = event;
     }
 

@@ -1,11 +1,12 @@
 {
     "name": "voir-native",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "description": "It is a framework to develop applications in a more controlled way with tabrisjs",
     "main": "dist/index.js",
     "scripts": {
-        "start": "tsc -p .",
-        "watch": "tsc -p . -w"
+        "build": "vite build",
+        "types": "tsc -p .",
+        "start": "npm-run-all --parallel build types"
     },
     "directories": {
         "dist": "dist",
@@ -31,6 +32,6 @@
         "url": "https://github.com/everskyblue/voir-native"
     },
     "typings": "./types/index.d.ts",
-    "author": "hicode",
+    "author": "hicodx",
     "license": "BSD 3-Clause"
 }

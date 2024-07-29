@@ -1,13 +1,13 @@
 {
     "compilerOptions": {
         "baseUrl": ".",
-        "outDir": "dist",
         "target": "ES6",
         "module": "CommonJS",
         "removeComments": false,
         "noImplicitAny": true,
         "lib": ["ES2017"],
         "declaration": true,
+        "emitDeclarationOnly": true,
         "declarationDir": "./types"
     },
     "include": ["src/**/*"],

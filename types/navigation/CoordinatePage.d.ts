@@ -1,4 +1,5 @@
-import { NavigationView, Properties as PropertiesTabris } from "tabris";
+import { type AnyWidget, NavigationView, Action, Properties as PropertiesTabris } from "tabris";
+import { type IMenuItemOption, type MenuItemOf } from "./menu";
 type TypeWidget = any[] | Array<any[]>;
 /**
  * @description
@@ -9,6 +10,19 @@ type TypeWidget = any[] | Array<any[]>;
  * haciendo que la nueva pagina no tenga los menus anteriores
  */
 export declare class CoordinatePageComponent extends NavigationView {
+    private _onActionSelect;
+    private _onDrawerItemSelected;
+    private _dataMenuDrawer;
+    private _contentDrawer;
+    set contentDrawer(view: AnyWidget);
+    get contentDrawer(): AnyWidget;
+    set onActionSelect(event: (itemAction: Action) => void);
+    get onActionSelect(): (itemAction: Action) => void;
+    set menuDrawer(menu: () => IMenuItemOption[]);
+    get menuDrawer(): IMenuItemOption[];
+    set onDrawerItemSelected(event: (item: MenuItemOf) => void);
+    get onDrawerItemSelected(): (item: MenuItemOf) => void;
+    private _render;
     constructor(props: PropertiesTabris<CoordinatePageComponent>);
     append(...widgets: TypeWidget): this;
 }

@@ -1,4 +1,4 @@
-import { NavigationView, contentView } from "tabris";
+import { NavigationView, contentView, asFactory} from "tabris";
 import type {
     Page,
     Action,
@@ -31,7 +31,7 @@ export function addView(...widgets: (Page | Action | SearchAction)[]) {
  */
 abstract class VoirRender {
     abstract renderAction(): Action[];
-    abstract render(): Page[];
+    abstract render(): Page;
     
     constructor() {
         const elms = [];
@@ -48,6 +48,7 @@ abstract class VoirRender {
 export const Voir = {
     Render: VoirRender,
     factory(Class: VoirRender) {
-        return createProxies(Class);
+        //@ts-ignore
+        return createProxies(Class) as VoirRender;
     }
 }

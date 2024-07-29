@@ -1,5 +1,6 @@
 import {
-    type AnyWidget,
+    type Widget,
+    type WidgetCollection,
     drawer,
     Constraint,
     TextView,
@@ -129,9 +130,9 @@ export function setMenuDrawer(
 /**
  * @version 0.4
  */
-export function setContentDrawer(view: AnyWidget) {
+export function setContentDrawer(view: Widget) {
     const scrollLayout = getScrollLayoutDrawer();
-    const findContent = drawer.find('#voirContentDrawer');
+    const findContent: WidgetCollection<Composite> = drawer.find('#voirContentDrawer');
     const content = findContent.length === 0 ? Composite({
             top: [Constraint.prev, 15],
             left: 0,
