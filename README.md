@@ -9,11 +9,7 @@
 
 ## Documentation
 
-<<<<<<< HEAD
--   [video example](#video)
-=======
 -   [video example](#video-example)
->>>>>>> 1bc522f (update)
 -   [getting started](#getting-started)
     -   [installation](#installation)
 -   [Voir](#voir)
