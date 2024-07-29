@@ -45,10 +45,10 @@ abstract class VoirRender {
     }
 }
 
-export const Voir = {
+export const Voir = Object.freeze({
     Render: VoirRender,
     factory(Class: VoirRender) {
         //@ts-ignore
         return createProxies(Class) as VoirRender;
     }
-}
+})
