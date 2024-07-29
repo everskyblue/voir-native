@@ -346,10 +346,6 @@ The drawermenu property is used in CoordinatePage
 ### DrawerMenuItem
 Go into the DrawerMenu component and define the *id*, *text*, *image* properties.
 
-## Video Example
-
-https://github.com/user-attachments/assets/91232486-11bb-4f71-a2dd-f0fd3be67bb2
-
 ```jsx
 <DrawerMenu>
 	<DrawerMenuItem
@@ -359,6 +355,10 @@ https://github.com/user-attachments/assets/91232486-11bb-4f71-a2dd-f0fd3be67bb2
 	/>
 </DrawerMenu>
 ```
+
+## Video Example
+
+https://github.com/user-attachments/assets/91232486-11bb-4f71-a2dd-f0fd3be67bb2
 
 
 <br><br>
