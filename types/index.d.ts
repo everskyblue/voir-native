@@ -13,7 +13,7 @@ declare abstract class VoirRender {
     abstract render(): Page;
     constructor();
 }
-export declare const Voir: {
+export declare const Voir: Readonly<{
     Render: typeof VoirRender;
     factory(Class: VoirRender): VoirRender;
-};
+}>;

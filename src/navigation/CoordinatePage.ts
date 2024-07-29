@@ -75,7 +75,7 @@ export class CoordinatePageComponent extends NavigationView {
     }
     
     private _render() {
-        if (this.menuDrawer.length > 0) setMenuDrawer(this.menuDrawer, this.onDrawerItemSelected);
+        if (this.menuDrawer?.length > 0) setMenuDrawer(this.menuDrawer, this.onDrawerItemSelected);
         if (this._contentDrawer) setContentDrawer(this._contentDrawer);
     }
 
