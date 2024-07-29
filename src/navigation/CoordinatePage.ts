@@ -96,7 +96,7 @@ export class CoordinatePageComponent extends NavigationView {
         this.on(
             "addChild",
             ({ child }: CompositeAddChildEvent<CoordinatePageComponent>) => {
-                if (child instanceof Action && this._onActionSelect) {
+                if (child instanceof Action && this._onActionSelect && !child.data.voirInitalizedEvent) {
                     child.onSelect(({ target }: EventObject<Action>) => this._onActionSelect(target));
                 }
                 
@@ -158,8 +158,12 @@ function fillExecAction(widgets: TypeWidget) {
     );
 
     const actions = widgets.filter(
-        (widget: TypeChild) =>
-            widget instanceof Action || widget instanceof SearchAction
+        (widget: TypeChild) => {
+            if (widget instanceof Action || widget instanceof SearchAction) {
+                return widget.data.voirInitalizedEvent = true;
+            }
+            return false;
+        }
     );
 
     const info = ctxPages.get(page);
