@@ -6,13 +6,10 @@
 <p align="center">It is a framework to develop android and ios applications in a more organized way with tabrisjs</p>
 
 <br>
-<video controls>
-    <source src="preview.webm" type="video/webm">
-</video>
-<br>
 
 ## Documentation
 
+-   [video example](#video)
 -   [getting started](#getting-started)
     -   [installation](#installation)
 -   [Voir](#voir)
@@ -348,6 +345,10 @@ The drawermenu property is used in CoordinatePage
 
 ### DrawerMenuItem
 Go into the DrawerMenu component and define the *id*, *text*, *image* properties.
+
+## Video Example
+
+https://github.com/user-attachments/assets/91232486-11bb-4f71-a2dd-f0fd3be67bb2
 
 ```jsx
 <DrawerMenu>
