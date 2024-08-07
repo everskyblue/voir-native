@@ -7,6 +7,7 @@ import {
 } from "../preference";
 import type {
     AnyWidget,
+    ApplyAttributes,
     CheckBox,
     Composite,
     JSXAttributes,
@@ -49,53 +50,15 @@ export type Callback<View extends AnyWidget> =
     | CallbackInstance<View>
     | Callable<View>;
 
-export function createProxies<T extends Composite>(
-    funReceivedProxy: Callback<T>,
-    funAppend?: CallbackAppend
-) {
-    const ProxiesCallback: typeof funReceivedProxy = new Proxy(
-        funReceivedProxy,
+export function createProxies<T extends Composite>(component: Callback<T>) {
+    const ProxiesCallback = new Proxy(
+        component,
         {
-            construct(
-                target: CallbackInstance<T>,
-                argArray
-            ) {
-                return new target(argArray[0]);
-                /*return new Proxy<InstanceType<CallbackInstance<T>>>(
-                    target(argArray[0]),
-                    {
-                        get(
-                            instance,
-                            prop: Extract<
-                                keyof Omit<Callback<T>, symbol>,
-                                Callback<T>
-                            >
-                        ) {
-                            if (prop === "append") {
-                                return (...widgets: any[]) => (
-                                    instance.append(...widgets),
-                                    typeof funAppend === "function"
-                                        ? funAppend(widgets)
-                                        : void 0,
-                                    instance
-                                );
-                            }
-                            return typeof instance[prop] === "function"
-                                ? (instance[prop] as Function).bind(instance)
-                                : instance[prop];
-                        },
-                        set(instance, prop: string, value: any) {
-                            //@ts-ignore
-                            instance[prop] = value;
-                            return true;
-                        },
-                    }
-                ) as T;*/
-            },
-            apply(_, __, argArray): InstanceType<CallbackInstance<T>> {
-                return new (ProxiesCallback as CallbackInstance<T>)(
-                    argArray[0]
-                );
+            /*construct(target, argArray) {
+                return new target(argArray[0] as Attributes<T>);
+            },*/
+            apply(target, __, argArray) {
+                return Reflect.construct(target, argArray);
             },
         }
     );
@@ -103,8 +66,26 @@ export function createProxies<T extends Composite>(
     return ProxiesCallback;
 }
 
-export function factory<T = any>(fac: T) {
-    if (true) {
-        
+type Args<C> = C extends Composite ? Attributes<C>[] : any[];
+interface Constructor<T> extends Function {
+    new(...args: Args<T>): T;
+    (...iargs: Args<T>): T;
+}
+
+export function factory<
+    T extends Function,
+>(fac: T) {
+    type Caller = Constructor<T>;
+    const handler: ProxyHandler<Constructor<T>> = {
+        get(target, p, receiver) {
+            return Reflect.get(target, p, receiver);
+        },
+        apply(target, thisArg, argArray) {
+            if (typeof target.name === 'string' && typeof target.constructor === 'function') {
+                return Reflect.construct(target, thisArg);
+            }
+            return Reflect.apply(null, target, thisArg);
+        }
     }
+   return  new Proxy(fac as unknown as Caller, handler);
 }
