@@ -34,11 +34,12 @@ export function animateHidden(
     );
 }
 
-export async function animate(
+export function animate(
     element: Widget<any>,
     delay: number,
     duration: number
 ) {
-    await animateShow(element, delay, 300);
-    await animateHidden(element, duration, duration);
+    return Promise.resolve(animateShow(element, delay, 300)).then(()=> {
+        return Promise.resolve(animateHidden(element, duration, duration));
+    })
 }

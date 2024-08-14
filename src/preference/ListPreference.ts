@@ -16,10 +16,6 @@ export interface IEntry {
     checked?: boolean;
 }
 
-function ProxyListPreference(props: Properties<ListPreferenceComponent> = {}) {
-    return new ListPreferenceComponent(props);
-}
-
 export class ListPreferenceComponent extends Checked {
     entries: IEntry[];
     textButtonAccept: string;
@@ -44,7 +40,7 @@ export class ListPreferenceComponent extends Checked {
             if (this.entries && this.entries.length > 0) {
                 modal.addView(
                     ...this.entries.map((entry, index) => {
-                        const radiobtn = RadioButton({
+                        const radio = RadioButton({
                             text: entry.text,
                             checked:
                                 entry.checked ??
@@ -64,10 +60,10 @@ export class ListPreferenceComponent extends Checked {
                         });
 
                         if (entry.id) {
-                            radiobtn.id = entry.id;
+                            radio.id = entry.id;
                         }
 
-                        return radiobtn;
+                        return radio;
                     })
                 );
             }
@@ -84,7 +80,7 @@ export class ListPreferenceComponent extends Checked {
     }
 }
 
-export const ListPreference = createProxies(ProxyListPreference);
+export const ListPreference = createProxies(ListPreferenceComponent);
 
 defineProperty(ListPreferenceComponent.prototype, "entries", {
     type: "any",

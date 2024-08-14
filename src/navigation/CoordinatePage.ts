@@ -1,17 +1,23 @@
 import {
     type EventObject,
     type AnyWidget,
+    type WidgetCollection,
     NavigationView,
     drawer,
     Page,
     Action,
     Properties as PropertiesTabris,
     SearchAction,
-    CompositeAddChildEvent
+    CompositeAddChildEvent,
+    Widget,
+    NativeObject,
+    Properties,
+    Listeners
 } from "tabris";
 import { createProxies } from "../utils/proxy";
 import { createInstance } from "../utils/helpers";
-import { type IMenuItemOption, type MenuItemOf, setMenuDrawer, setContentDrawer } from "./menu";
+import { customEvent } from "../utils/custom-events";
+import { type MenuItemOption, type MenuItemOf, setMenuDrawer, setContentDrawer, MenuItem, MenuAction } from "./menu";
 
 type FirstExecAction = {
     actions: Array<Action | SearchAction> | null;
@@ -31,118 +37,107 @@ const ctxPages = new Map<Page, FirstExecAction>();
 /**
  * @description
  * utilizar en JSX <CoordinatePageComponent></CoordinatePageComponent>
- * encapsula la logica del menu de acciones del AppBar
+ * encapsula la lógica del menu de acciones del AppBar
  * cuando se añade un Page con Action o SearchAction
- * estas acciones desapareceran si la no es visible
+ * estas acciones desaparecerán si la no es visible
  * haciendo que la nueva pagina no tenga los menus anteriores
  */
 export class CoordinatePageComponent extends NavigationView {
-    private _onActionSelect!: any;
-    private _onDrawerItemSelected!: any;
     private _dataMenuDrawer!: any;
     private _contentDrawer!: any;
-    
-    set contentDrawer(view: AnyWidget) {
+    onActionSelected?: any;
+    onDrawerItemSelected?: any;
+
+    static readonly events = ['actionSelected', 'drawerItemSelected'];
+
+    set contentDrawer(view: Widget) {
         this._contentDrawer = view;
     }
-    
+
     get contentDrawer() {
-       return this._contentDrawer;
+        return this._contentDrawer;
     }
 
-    set onActionSelect(event: (itemAction: Action) => void) {
-        this._onActionSelect = event;
+    set menuDrawer(menu: WidgetCollection<MenuItem>) {
+        this._dataMenuDrawer = menu.toArray();
     }
 
-    get onActionSelect() {
-        return this._onActionSelect;
-    }
-
-    set menuDrawer(menu: ()=> IMenuItemOption[]) {
-        this._dataMenuDrawer = menu();
-    }
-
-    get menuDrawer(): IMenuItemOption[] {
+    get menuDrawer(): WidgetCollection<MenuItem> {
         return this._dataMenuDrawer;
     }
 
-    set onDrawerItemSelected(event: (item: MenuItemOf) => void) {
-        this._onDrawerItemSelected = event;
-    }
-
-    get onDrawerItemSelected() {
-        return this._onDrawerItemSelected;
-    }
-    
-    private _render() {
-        if (this.menuDrawer?.length > 0) setMenuDrawer(this.menuDrawer, this.onDrawerItemSelected);
-        if (this._contentDrawer) setContentDrawer(this._contentDrawer);
-    }
-
-    constructor(props: PropertiesTabris<CoordinatePageComponent>) {
+    constructor(props: any) {
         super(props);
-        
-        if (props.drawerActionVisible) {
-            this._render();
-        }
-        
-        /**
-         * @INFO
-         * ARREGLAR UN ERROR QUE SE GENERA CUANDO addView
-         * SE LLAMA VARIAS VECES AL AÑADIR ELEMENTOS
-         * EJEMPLO: addView(<Page />) addView(<Action />)
-         * ESTO PROVOCA NO OBTENER CORRECTAMENTE EL Action y SearchAction
-         */
-        this.on(
-            "addChild",
-            ({ child }: CompositeAddChildEvent<CoordinatePageComponent>) => {
-                if (child instanceof Action && this._onActionSelect && !child.data.voirInitalizedEvent) {
-                    child.onSelect(({ target }: EventObject<Action>) => this._onActionSelect(target));
-                }
-                
-                if (child instanceof Page) {
-                    ctxPages.set(child, {
-                        hidden: false,
-                        actions: null,
-                        isDisposed: false,
-                    });
-                    
-                    child.on("appear", () => {
-                        const info = ctxPages.get(child);
-                        if (typeof info === "object" && info.hidden) {
-                            if (info.actions !== null)
-                                this.append(info.actions);
-                            info.hidden = false;
-                        }
+    }
 
-                        if (ctxPages.size === 1) {
-                            setChangeEnabledDrawer(true);
-                        }
-                    });
-
-                    child.on("disappear", () => {
-                        const info = ctxPages.get(child);
-
-                        setChangeEnabledDrawer(false);
-
-                        if (!info.hidden) {
-                            info.hidden = true;
-                            info.actions?.forEach((action) => action.detach());
-                        }
-
-                        if (info.isDisposed) ctxPages.delete(child);
-                    });
-
-                    child.on("dispose", () => {
-                        ctxPages.get(child).isDisposed = true;
-                    });
-                }
+    private readonly _renderWidgetInDrawer = (() => {
+        let isAdd = false;
+        return () => {
+            if (isAdd) return;
+            isAdd = true;
+            const handler = () => {
+                setMenuDrawer(this.menuDrawer);
+                setContentDrawer(this.contentDrawer);
+                this.menuDrawer.forEach(item => {
+                    customEvent.listener(this, item.parent());
+                });
             }
-        );
-
-        function setChangeEnabledDrawer(enable: boolean) {
-            if (props?.drawerActionVisible) drawer.enabled = enable;
+            if (this.drawerActionVisible) handler();
         }
+    })();
+
+    on(type: string, listener: (event: EventObject<NativeObject>) => any, context?: object): this;
+    on(listeners: { [event: string]: (event: EventObject<NativeObject>) => void; }): this;
+    on(type: any, listener?: any, context?: any): this {
+        if (typeof type === 'string' && CoordinatePageComponent.events.includes(type)) {
+            customEvent.addListener(this, type, listener);
+        }
+        return super.on(type, listener, context);
+    }
+
+    protected _addChild(child: Widget): void {
+        customEvent.listener(this, child);
+        if (child instanceof Page) {
+            ctxPages.set(child, {
+                hidden: false,
+                actions: null,
+                isDisposed: false,
+            });
+
+            child.on("appear", () => {
+                this._renderWidgetInDrawer();
+                const info = ctxPages.get(child);
+                if (typeof info === "object" && info.hidden) {
+                    if (info.actions !== null)
+                        this.append(info.actions);
+                    info.hidden = false;
+                }
+                if (ctxPages.size === 1) {
+                    setChangeEnabledDrawer(true);
+                }
+            });
+
+            child.on("disappear", () => {
+                const info = ctxPages.get(child);
+                setChangeEnabledDrawer(false);
+                if (!info.hidden) {
+                    info.hidden = true;
+                    info.actions?.forEach((action) => action.detach());
+                }
+
+                if (info.isDisposed) ctxPages.delete(child);
+            });
+
+            child.on("dispose", () => {
+                ctxPages.get(child).isDisposed = true;
+            });
+        }
+
+        const setChangeEnabledDrawer = (enable: boolean) => {
+            if (this?.drawerActionVisible) drawer.enabled = enable;
+        }
+
+        return super._addChild(child);
     }
 
     append(...widgets: TypeWidget) {
@@ -160,7 +155,7 @@ function fillExecAction(widgets: TypeWidget) {
     const actions = widgets.filter(
         (widget: TypeChild) => {
             if (widget instanceof Action || widget instanceof SearchAction) {
-                return widget.data.voirInitalizedEvent = true;
+                return widget.data.voirInitializedEvent = true;
             }
             return false;
         }
@@ -188,20 +183,27 @@ function resolveParameter($widgets: TypeWidget) {
         return fillExecAction(widgets);
 }
 
-function ProxyCoordinatePage(
-    props: PropertiesTabris<CoordinatePageComponent>
-): CoordinatePageComponent {
-    return createInstance<CoordinatePageComponent>(
-        props,
-        CoordinatePageComponent
-    );
-}
+customEvent(CoordinatePageComponent, {
+    instanceOf: [{
+        element: Action,
+        listeners: ['select'],
+        invoke: ['actionSelected']
+    }, {
+        element: SearchAction,
+        listeners: ['select'],
+        invoke: ['actionSelected']
+    }, {
+        element: MenuAction,
+        listeners: ['tap'],
+        invoke: ['drawerItemSelected']
+    }],
+    nameEvents: ['actionSelected', 'drawerItemSelected']
+})
 
 /**
  * @description
  * encapsula en un proxy cuando se ejecute como funcion o instancia
  */
-export const CoordinatePage = createProxies<CoordinatePageComponent>(
-    ProxyCoordinatePage,
-    resolveParameter
+export const CoordinatePage = createProxies(
+    CoordinatePageComponent
 );

@@ -2,12 +2,6 @@ import { Switch, Properties } from "tabris";
 import { createProxies } from "../utils/proxy";
 import { Checked } from "./AbstractCheked";
 
-function ProxySwitchPreference(
-    props: Properties<SwitchPreferenceComponent> = {}
-) {
-    return new SwitchPreferenceComponent(props);
-}
-
 export class SwitchPreferenceComponent extends Checked {
     onChange: any;
 
@@ -20,4 +14,4 @@ export class SwitchPreferenceComponent extends Checked {
     }
 }
 
-export const SwitchPreference = createProxies(ProxySwitchPreference);
+export const SwitchPreference = createProxies(SwitchPreferenceComponent);

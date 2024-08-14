@@ -4,19 +4,12 @@ import { createInstance } from "../utils/helpers";
 
 export class PreferenceScreenComponent extends Page {
     constructor(props?: Properties<PreferenceScreenComponent>) {
-        super(props);
+        super({
+            ...props,
+            layoutData: "stretch"
+        });
     }
 }
 
-function preferenceScreen(props: Properties<PreferenceScreenComponent>) {
-    return createInstance<PreferenceScreenComponent>(
-        {
-            layoutData: "stretch",
-            ...props,
-        },
-        PreferenceScreenComponent
-    );
-}
 
-export const PreferenceScreen =
-    createProxies<PreferenceScreenComponent>(preferenceScreen);
+export const PreferenceScreen = createProxies(PreferenceScreenComponent);

@@ -1,6 +1,6 @@
 import {
     type Widget,
-    type WidgetCollection,
+    WidgetCollection,
     drawer,
     Constraint,
     TextView,
@@ -10,20 +10,20 @@ import {
     ScrollView,
 } from "tabris";
 
-type MenuItemOf = MenuItem;
+export type MenuItemOf = MenuItem;
 
-type MenuOption = {
-    [key: string]: IMenuItemOption;
+export type MenuOption = {
+    [key: string]: MenuItemOption;
 };
 
-export interface IMenuItemOption {
+export interface MenuItemOption {
     id: string;
     text: string;
     image?: string;
 }
 
-class MenuItem extends Composite {
-    constructor(id: string) {
+export class MenuAction extends Composite {
+    constructor(id?: string) {
         super({
             id,
             top: Constraint.prev,
@@ -35,37 +35,61 @@ class MenuItem extends Composite {
     }
 }
 
+export class MenuItem extends Row {
+    constructor(props: any) {
+        super({
+            layoutData: "stretch",
+            alignment: "centerY",
+        });
+        this.id = props.id;
+        this._setElements(props.image, props.text);
+    }
+
+    _setElements(img: any, text: string) {
+        const refImage = 'voir-img-ref-' + this.id;
+        const refText = 'voir-text-ref-' + this.id;
+        
+        if (img) this.append(ImageView({
+            image: img,
+            width: 24,
+            left: 28,
+            id: refImage
+        }))
+        
+        const separatorLeft = !img ? 28 + 24 + 12 : 12;
+        
+        this.append(TextView({
+            text: text,
+            font: "20px sans-serif",
+            left: separatorLeft,
+            id: refText
+        }))
+    }
+
+    text: string
+    image: any
+}
+
 /**
  * @version 0.4
- * no posee hijos y su padre es DrawerMenu
  */
-export const DrawerMenuItem = (props: IMenuItemOption) => {
-    return ()=> props;
-}
+export const DrawerMenuItem = MenuItem;
 
 /**
  * @version 0.4
  * contenedor para DrawerMenuItem
  */
-export const DrawerMenu = ({children}: {children: ReturnType<typeof DrawerMenuItem>[]}) => {
-    return ()=> {
-        const props: IMenuItemOption[] = [];
-        for (const child of children) {
-            if (typeof child === 'function') props.push(child());
-        }
-        return props;
-    };
+export const DrawerMenu = ({ children }: { children: Widget<typeof DrawerMenuItem>[] }) => {
+    return new WidgetCollection(children);
 }
-
-export type { MenuItemOf };
 
 /**
  * @deprecated 
  * emite un warning desde la version 0.4
  */
 export const menuDrawer = (
-    menus: IMenuItemOption[],
-    eventSelectMenu: (menu: MenuItem) => void
+    menus: MenuItemOption[] | WidgetCollection<MenuItem>,
+    eventSelectMenu: (menu: MenuAction) => void
 ) => {
     console.warn('deprecated function [menuDrawer] use setMenuDrawer');
     setMenuDrawer(menus, eventSelectMenu);
@@ -73,7 +97,7 @@ export const menuDrawer = (
 
 function getScrollLayoutDrawer() {
     const scrollLayout = drawer.find('#scrollableLayoutMenuDrawer');
-    
+
     const layoutMenu = (scrollLayout.length !== 0 ? scrollLayout.only() as ScrollView : ScrollView({
         id: "scrollableLayoutMenuDrawer",
         top: Constraint.prev,
@@ -83,7 +107,7 @@ function getScrollLayoutDrawer() {
     }));
 
     if (scrollLayout.length === 0) drawer.append(layoutMenu);
-    
+
     return layoutMenu;
 }
 
@@ -91,37 +115,22 @@ function getScrollLayoutDrawer() {
  * @version 0.4
  */
 export function setMenuDrawer(
-    menus: IMenuItemOption[],
-    eventSelectMenu: (menu: MenuItem) => void
+    menus: MenuItemOption[] | WidgetCollection<MenuItem>,
+    eventSelectMenu?: (menu: MenuAction) => void
 ) {
-    const scrollLayout = getScrollLayoutDrawer().append(
-        menus.map((data: IMenuItemOption) => {
-            const row = Row({
-                layoutData: "stretch",
-                alignment: "centerY",
-            });
-            if (!!data.image)
-                row.append(
-                    ImageView({
-                        image: data.image,
-                        width: 24,
-                        left: 28,
-                    })
-                );
-            
-            const separatorLeft = !data.image ? 28 + 24 + 12 : 12;
-            
-            row.append(
-                TextView({
-                    text: data.text,
-                    font: "20px sans-serif",
-                    left: separatorLeft,
+    getScrollLayoutDrawer().append(
+        menus.map(data => {
+            const isObject = data instanceof MenuItem;
+            const id = data.id;
+            if (isObject) data.id = '';
+            return new MenuAction(id).append(
+                isObject ? data : new MenuItem({
+                    image: data.image,
+                    text: data.text
                 })
-            );
-
-            return new MenuItem(data.id).append(row).onTap(function () {
-                eventSelectMenu(this as MenuItem);
-                setTimeout(() => drawer.close(), 100);
+            ).onTap(function () {
+                if (typeof eventSelectMenu === 'function') eventSelectMenu(this);
+                const id = setTimeout(() => (drawer.close(), clearTimeout(id)), 100);
             });
         })
     );
@@ -134,12 +143,12 @@ export function setContentDrawer(view: Widget) {
     const scrollLayout = getScrollLayoutDrawer();
     const findContent: WidgetCollection<Composite> = drawer.find('#voirContentDrawer');
     const content = findContent.length === 0 ? Composite({
-            top: [Constraint.prev, 15],
-            left: 0,
-            right: 0,
-            id: 'voirContentDrawer',
-            padding: 8
-        }).append(view)
+        top: [Constraint.prev, 15],
+        left: 0,
+        right: 0,
+        id: 'voirContentDrawer',
+        padding: 8
+    }).append(view)
         : findContent.only().append(view);
     if (findContent.length === 0) scrollLayout.append(content);
- }
+}

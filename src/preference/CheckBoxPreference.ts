@@ -2,10 +2,6 @@ import { CheckBox, Properties } from "tabris";
 import { createProxies } from "../utils/proxy";
 import { Checked } from "./AbstractCheked";
 
-function ProxyCheckBoxPreference(props: Properties<CheckBoxPreferenceComponent> = {}) {
-    return new CheckBoxPreferenceComponent(props);
-}
-
 export class CheckBoxPreferenceComponent extends Checked {
     constructor(props: Properties<CheckBoxPreferenceComponent>) {
         super(props);
@@ -16,4 +12,4 @@ export class CheckBoxPreferenceComponent extends Checked {
     }
 }
 
-export const CheckBoxPreference = createProxies(ProxyCheckBoxPreference);
+export const CheckBoxPreference = createProxies(CheckBoxPreferenceComponent);

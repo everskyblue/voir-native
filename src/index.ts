@@ -1,11 +1,13 @@
-import { NavigationView, contentView, asFactory} from "tabris";
+import { NavigationView, contentView } from "tabris";
 import type {
     Page,
     Action,
     SearchAction,
     CompositeAddChildEvent,
+    Widget,
+    Constructor,
 } from "tabris";
-import { createProxies } from "./utils/proxy";
+import { factory } from "./utils/proxy";
 
 let navigation: NavigationView;
 
@@ -18,7 +20,6 @@ contentView.on(
     }
 );
 
-export default addView;
 export * from "./modal";
 export * from "./navigation";
 export * from "./preference";
@@ -31,6 +32,7 @@ export function addView(...widgets: (Page | Action | SearchAction)[]) {
  */
 abstract class VoirRender {
     abstract renderAction(): Action[];
+    
     abstract render(): Page;
     
     constructor() {
@@ -45,10 +47,15 @@ abstract class VoirRender {
     }
 }
 
+export interface Render {
+    renderAction(): (Action | SearchAction)[];
+    render(): Widget;
+}
+
+//@ts-ignore
 export const Voir = Object.freeze({
     Render: VoirRender,
-    factory(Class: VoirRender) {
-        //@ts-ignore
-        return createProxies(Class) as VoirRender;
+    factory(Class: Constructor<Render>) {
+        return factory(Class);
     }
-})
+}) 
