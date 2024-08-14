@@ -5,4 +5,4 @@ export declare class SwitchPreferenceComponent extends Checked {
     constructor(props: Properties<SwitchPreferenceComponent>);
     _getButton(props: Properties<SwitchPreferenceComponent>): import("tabris").widgets.Switch;
 }
-export declare const SwitchPreference: import("../utils/proxy").Callback<SwitchPreferenceComponent>;
+export declare const SwitchPreference: import("tabris").Constructor<SwitchPreferenceComponent>;

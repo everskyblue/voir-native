@@ -13,4 +13,4 @@ export declare class ListPreferenceComponent extends Checked {
         onSelect?: any;
     });
 }
-export declare const ListPreference: import("../utils/proxy").Callback<ListPreferenceComponent>;
+export declare const ListPreference: import("tabris").Constructor<ListPreferenceComponent>;

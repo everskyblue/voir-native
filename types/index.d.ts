@@ -1,6 +1,5 @@
 import { NavigationView } from "tabris";
-import type { Page, Action, SearchAction } from "tabris";
-export default addView;
+import type { Page, Action, SearchAction, Widget, Constructor } from "tabris";
 export * from "./modal";
 export * from "./navigation";
 export * from "./preference";
@@ -13,7 +12,11 @@ declare abstract class VoirRender {
     abstract render(): Page;
     constructor();
 }
+export interface Render {
+    renderAction(): (Action | SearchAction)[];
+    render(): Widget;
+}
 export declare const Voir: Readonly<{
     Render: typeof VoirRender;
-    factory(Class: VoirRender): VoirRender;
+    factory(Class: Constructor<Render>): (new () => Render) & (() => Render);
 }>;
