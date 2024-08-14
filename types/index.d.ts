@@ -7,9 +7,9 @@ export declare function addView(...widgets: (Page | Action | SearchAction)[]): N
 /**
  * @Version 0.4
  */
-declare abstract class VoirRender {
-    abstract renderAction(): Action[];
-    abstract render(): Page;
+declare abstract class VoirRender implements Render {
+    abstract renderAction(): (Action | SearchAction)[];
+    abstract render(): Widget;
     constructor();
 }
 export interface Render {

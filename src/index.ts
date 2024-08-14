@@ -30,10 +30,10 @@ export function addView(...widgets: (Page | Action | SearchAction)[]) {
 /**
  * @Version 0.4
  */
-abstract class VoirRender {
-    abstract renderAction(): Action[];
+abstract class VoirRender implements Render {
+    abstract renderAction(): (Action | SearchAction)[];
     
-    abstract render(): Page;
+    abstract render(): Widget;
     
     constructor() {
         const elms = [];
@@ -42,7 +42,7 @@ abstract class VoirRender {
             const actions = this.renderAction();
             if (actions) elms.push(...Array.from(actions));
         }
-        
+        //@ts-ignore
         addView(...elms, this.render());
     }
 }

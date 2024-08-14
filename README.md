@@ -64,7 +64,7 @@ addView function adds views to the **[CoordinatePage](#coordinatepage)**
 #### example
 
 ```typescript
-import addView, { CoordinatePage } from "voir-native";
+import { addView, CoordinatePage } from "voir-native";
 import { Action, Page, contentView } from "tabris";
 
 contentView.append(<CoordinatePage layoutData="stretch" />);
@@ -76,10 +76,10 @@ addView(<Action title="setting" />, <Page title="setting" stretch />);
 
 | parameter types
 |:--
-| Array\<**_IMenuItemOption_**\>
+| Array\<**_MenuItemOption_**\>
 
 ```typescript
-interface IMenuItemOption {
+interface MenuItemOption {
     id: string;
     text: string;
     image?: string;
@@ -126,8 +126,8 @@ show popup message with duration time
 
 | method           | parameter types |
 | ---------------- | --------------- |
-| contructor       | string, number  |
-| static makeToast | string, number  |
+| constructor       | string, number  |
+| static makeText | string, number  |
 | show             |                 |
 
 #### example
@@ -135,8 +135,10 @@ show popup message with duration time
 ```typescript
 import { Toast } from "voir-native";
 
-Toast.makeText("hello");
+Toast.makeText("hello", 2000).show();
+
 ```
+static methods: **SHORT | MEDIUM | LONG**
 
 ### Modal
 
