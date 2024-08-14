@@ -11,7 +11,7 @@ import { animate } from "./animation";
 let stackToast: ({element: Composite, promise: ()=> Promise<any>})[] = [];
 
 export default class Toast extends AnimationTime {
-    show: (time: number) => any;
+    show: () => any;
 
     readonly _message = TextView({
         textColor: "white",
