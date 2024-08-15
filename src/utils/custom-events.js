@@ -23,7 +23,7 @@ customEvent.listener = (ctx, ctx2) => {
     for (let { listeners: nameEvents, element, invoke } of instanceOf) {
         if (!(ctx2 instanceof element)) continue;
         const realHandler = store.get(ctx);
-        //console.log(realHandler, ctx);
+        if (!realHandler) continue;
         if (realHandler.listeners.has(ctx2)) continue;
         realHandler.listeners.set(ctx2, nameEvents.map(nameEvent => {
             const event = new Listeners(ctx2, nameEvent);
