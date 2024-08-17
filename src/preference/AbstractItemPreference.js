@@ -1,44 +1,35 @@
 import "string-tocapitalize";
-import { Composite, TextView, Properties, WidgetTapEvent } from "tabris";
+import { Composite, TextView } from "tabris";
 import { setPreference, existsKeyPreference } from "./storage";
 import defineProperty from "../utils/define-property";
+import { layoutData } from "../support";
 
 const adjustCompactText = {
     left: 0,
     right: "10%",
 };
 
-export interface PreferenceParams {
-    key: string;
-    value: string | number | boolean;
-    title: string;
-    summary: string;
-}
+const addEvent = (component) => (event) =>
+    component.on('tap', event);
 
-type SelectEvent = (event: WidgetTapEvent<ItemPreference>) => any;
-
-const addEvent = (component: ItemPreference) => (event: SelectEvent) =>
-    component.onTap(event);
-
-export default abstract class ItemPreference
+/**
+ * @property {string} title
+ * @property {string} summary
+ * @property {string} key
+ * @property {any} value
+ */
+export default class ItemPreference
     extends Composite
-    implements PreferenceParams
 {
-    public title: string;
-    public summary: string;
-    public key: string;
-    public value: string | number | boolean;
-
-    public set onSelect(fn: (event: SelectEvent) => any) {
-        //@ts-ignore
+    set onSelect(fn) {
         addEvent(this)(fn);
     }
 
-    public get onSelect(): (event: SelectEvent) => any {
+    get onSelect() {
         return addEvent(this);
     }
 
-    constructor(props: Properties<ItemPreference>) {
+    constructor(props) {
         super({
             left: 0,
             right: 0,
@@ -53,12 +44,12 @@ export default abstract class ItemPreference
         }
 
         const centerY = this.summary.length === 0 ? true : 0;
-        const propTitle: Properties<TextView> = {
+        const propTitle = {
             text: this.title.toCapitalize(),
         };
 
         if (centerY) {
-            propTitle.centerY = true;
+            propTitle.centerY = layoutData.centerY;
         } else {
             propTitle.top = "prev()";
         }

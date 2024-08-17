@@ -1,12 +1,13 @@
-import { Page, Properties } from "tabris";
+import { Page } from "tabris";
 import { createProxies } from "../utils/proxy";
 import { createInstance } from "../utils/helpers";
+import { layoutData } from "../support";
 
 export class PreferenceScreenComponent extends Page {
-    constructor(props?: Properties<PreferenceScreenComponent>) {
+    constructor(props = {}) {
         super({
             ...props,
-            layoutData: "stretch"
+            layoutData: layoutData.stretch
         });
     }
 }

@@ -1,10 +1,10 @@
-import type { PropertyChangedEvent, CheckBox, Properties, RadioButton, Switch, Widget } from "tabris";
 import ItemPreference from "./AbstractItemPreference";
 import { getValuePreference, setPreference } from "./storage";
+import { layoutData } from "../support"
 
-export abstract class Checked extends ItemPreference {
-    constructor(props: Pick<any, any>) {
-        let checkButton: CheckBox | Switch;
+export class Checked extends ItemPreference {
+    constructor(props) {
+        let checkButton;
         const originalOnSelect = props.onSelect;
 
         props.onSelect = () =>
@@ -14,28 +14,20 @@ export abstract class Checked extends ItemPreference {
 
         checkButton = this._getButton({
             right: 0,
-            centerY: true,
+            centerY: layoutData.centerY,
             checked: getValuePreference(this.key) ?? this.value,
         });
 
         if (typeof checkButton !== "undefined") {
             this.addListener(checkButton, originalOnSelect);
-            this.append(checkButton as Widget<typeof checkButton>);
+            this.append(checkButton);
         }
     }
 
-    addListener(
-        checkButton: RadioButton | Switch | CheckBox,
-        originalOnSelect: Function
-    ) {
+    addListener(checkButton, originalOnSelect) {
         checkButton.on(
             "checkedChanged",
-            (
-                e: PropertyChangedEvent<
-                    RadioButton | Switch | CheckBox,
-                    boolean
-                >
-            ) => {
+            e => {
                 setPreference(this.key, checkButton.checked);
                 typeof originalOnSelect === "function" &&
                     originalOnSelect.call(this, e);
@@ -43,7 +35,7 @@ export abstract class Checked extends ItemPreference {
         );
     }
 
-    abstract _getButton(
-        props: Properties<CheckBox | Switch | RadioButton>
-    ): CheckBox | Switch | RadioButton;
+    _getButton(props) {
+        throw new Error('implements method');
+    }
 }

@@ -1,15 +1,15 @@
-import { Switch, Properties } from "tabris";
+import { Switch } from "tabris";
 import { createProxies } from "../utils/proxy";
 import { Checked } from "./AbstractCheked";
 
 export class SwitchPreferenceComponent extends Checked {
-    onChange: any;
+    //onChange;
 
-    constructor(props: Properties<SwitchPreferenceComponent>) {
+    constructor(props) {
         super(props);
     }
 
-    _getButton(props: Properties<SwitchPreferenceComponent>) {
+    _getButton(props) {
         return new Switch(props);
     }
 }

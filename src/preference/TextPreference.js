@@ -1,9 +1,9 @@
-import { TextView, Properties } from "tabris";
+import { TextView } from "tabris";
 import ItemPreference from "./AbstractItemPreference";
 import { createProxies } from "../utils/proxy";
 
 export class TextPreferenceComponent extends ItemPreference {
-    constructor(props: Properties<TextView>) {
+    constructor(props) {
         super(props)
     }
 

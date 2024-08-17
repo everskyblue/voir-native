@@ -1,13 +1,13 @@
-import { CheckBox, Properties } from "tabris";
+import { CheckBox } from "tabris";
 import { createProxies } from "../utils/proxy";
 import { Checked } from "./AbstractCheked";
 
 export class CheckBoxPreferenceComponent extends Checked {
-    constructor(props: Properties<CheckBoxPreferenceComponent>) {
+    constructor(props) {
         super(props);
     }
 
-    _getButton(props: Properties<CheckBoxPreferenceComponent>) {
+    _getButton(props) {
         return new CheckBox(props);
     }
 }

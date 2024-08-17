@@ -1,19 +1,12 @@
-import { NavigationView, contentView } from "tabris";
-import type {
-    Page,
-    Action,
-    SearchAction,
-    CompositeAddChildEvent,
-    Widget,
-    Constructor,
-} from "tabris";
+import { NavigationView } from "tabris";
 import { factory } from "./utils/proxy";
+import { contentView } from "./support";
 
-let navigation: NavigationView;
+let navigation;
 
 contentView.on(
     "addChild",
-    ({ child }: CompositeAddChildEvent<typeof contentView>) => {
+    ({ child }) => {
         if (child instanceof NavigationView && !navigation) {
             navigation = child;
         }
@@ -23,18 +16,14 @@ contentView.on(
 export * from "./modal";
 export * from "./navigation";
 export * from "./preference";
-export function addView(...widgets: (Page | Action | SearchAction)[]) {
+export function addView(...widgets) {
     return navigation.append(...widgets);
 }
 
 /**
  * @Version 0.4
  */
-abstract class VoirRender implements Render {
-    abstract renderAction(): (Action | SearchAction)[];
-    
-    abstract render(): Widget;
-    
+class VoirRender {
     constructor() {
         const elms = [];
         
@@ -47,15 +36,17 @@ abstract class VoirRender implements Render {
     }
 }
 
+/*
 export interface Render {
-    renderAction(): (Action | SearchAction)[];
+    renderAction(): (typeof Action | SearchAction)[];
     render(): Widget;
-}
+}*/
 
-//@ts-ignore
 export const Voir = Object.freeze({
     Render: VoirRender,
-    factory(Class: Constructor<Render>) {
+    factory(Class) {
         return factory(Class);
     }
 }) 
+
+export * from "./support"

@@ -1,32 +1,17 @@
 import {
-    type Widget,
-    WidgetCollection,
-    drawer,
-    Constraint,
     TextView,
     ImageView,
-    Row,
     Composite,
     ScrollView,
+    WidgetCollection
 } from "tabris";
-
-export type MenuItemOf = MenuItem;
-
-export type MenuOption = {
-    [key: string]: MenuItemOption;
-};
-
-export interface MenuItemOption {
-    id: string;
-    text: string;
-    image?: string;
-}
+import { drawer, Row, isVersion2 } from "../support";
 
 export class MenuAction extends Composite {
-    constructor(id?: string) {
+    constructor(id) {
         super({
             id,
-            top: Constraint.prev,
+            top: 'prev()',
             right: 0,
             left: 0,
             height: 56,
@@ -36,20 +21,22 @@ export class MenuAction extends Composite {
 }
 
 export class MenuItem extends Row {
-    constructor(props: any) {
-        super({
+    constructor(props) {
+        
+        super({//@ts-ignore
             layoutData: "stretch",
             alignment: "centerY",
         });
+        
         this.id = props.id;
         this._setElements(props.image, props.text);
     }
 
-    _setElements(img: any, text: string) {
+    _setElements(img, text) {
         const refImage = 'voir-img-ref-' + this.id;
         const refText = 'voir-text-ref-' + this.id;
         
-        if (img) this.append(ImageView({
+        if (img) this.append(new ImageView({
             image: img,
             width: 24,
             left: 28,
@@ -58,7 +45,7 @@ export class MenuItem extends Row {
         
         const separatorLeft = !img ? 28 + 24 + 12 : 12;
         
-        this.append(TextView({
+        this.append(new TextView({
             text: text,
             font: "20px sans-serif",
             left: separatorLeft,
@@ -66,8 +53,8 @@ export class MenuItem extends Row {
         }))
     }
 
-    text: string
-    image: any
+    text
+    image
 }
 
 /**
@@ -79,18 +66,15 @@ export const DrawerMenuItem = MenuItem;
  * @version 0.4
  * contenedor para DrawerMenuItem
  */
-export const DrawerMenu = ({ children }: { children: Widget<typeof DrawerMenuItem>[] }) => {
-    return new WidgetCollection(children);
+export const DrawerMenu = ({ children }, _children) => {
+    return new WidgetCollection(children??_children);
 }
 
 /**
  * @deprecated 
  * emite un warning desde la version 0.4
  */
-export const menuDrawer = (
-    menus: MenuItemOption[] | WidgetCollection<MenuItem>,
-    eventSelectMenu: (menu: MenuAction) => void
-) => {
+export const menuDrawer = (menus, eventSelectMenu) => {
     console.warn('deprecated function [menuDrawer] use setMenuDrawer');
     setMenuDrawer(menus, eventSelectMenu);
 }
@@ -98,9 +82,9 @@ export const menuDrawer = (
 function getScrollLayoutDrawer() {
     const scrollLayout = drawer.find('#scrollableLayoutMenuDrawer');
 
-    const layoutMenu = (scrollLayout.length !== 0 ? scrollLayout.only() as ScrollView : ScrollView({
+    const layoutMenu = (scrollLayout.length !== 0 ? scrollLayout.first() : new ScrollView({
         id: "scrollableLayoutMenuDrawer",
-        top: Constraint.prev,
+        top: 'prev()',
         left: 0,
         right: 0,
         bottom: 0,
@@ -114,10 +98,7 @@ function getScrollLayoutDrawer() {
 /**
  * @version 0.4
  */
-export function setMenuDrawer(
-    menus: MenuItemOption[] | WidgetCollection<MenuItem>,
-    eventSelectMenu?: (menu: MenuAction) => void
-) {
+export function setMenuDrawer(menus, eventSelectMenu) {
     getScrollLayoutDrawer().append(
         menus.map(data => {
             const isObject = data instanceof MenuItem;
@@ -128,7 +109,7 @@ export function setMenuDrawer(
                     image: data.image,
                     text: data.text
                 })
-            ).onTap(function () {
+            ).on('tap', function () {
                 if (typeof eventSelectMenu === 'function') eventSelectMenu(this);
                 const id = setTimeout(() => (drawer.close(), clearTimeout(id)), 100);
             });
@@ -139,16 +120,16 @@ export function setMenuDrawer(
 /**
  * @version 0.4
  */
-export function setContentDrawer(view: Widget) {
+export function setContentDrawer(view) {
     const scrollLayout = getScrollLayoutDrawer();
-    const findContent: WidgetCollection<Composite> = drawer.find('#voirContentDrawer');
-    const content = findContent.length === 0 ? Composite({
-        top: [Constraint.prev, 15],
+    const findContent = drawer.find('#voirContentDrawer');
+    const content = findContent.length === 0 ? new Composite({
+        top: 'prev() 15',
         left: 0,
         right: 0,
         id: 'voirContentDrawer',
         padding: 8
     }).append(view)
-        : findContent.only().append(view);
+        : findContent.first().append(view);
     if (findContent.length === 0) scrollLayout.append(content);
 }

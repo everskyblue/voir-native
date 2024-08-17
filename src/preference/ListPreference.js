@@ -1,33 +1,22 @@
-import {
-    LayoutData,
-    RadioButton,
-    Properties,
-    RadioButtonSelectEvent,
-} from "tabris";
+import { RadioButton } from "tabris";
+import { LayoutData } from "../support";
 import { Checked } from "./AbstractCheked";
 import { createProxies } from "../utils/proxy";
 import defineProperty from "../utils/define-property";
 import { Modal } from "../modal";
 import { getValuePreference, setPreference } from "./storage";
 
-export interface IEntry {
-    id?: string;
-    text: string;
-    checked?: boolean;
-}
-
 export class ListPreferenceComponent extends Checked {
-    entries: IEntry[];
-    textButtonAccept: string;
+    /*entries;
+    textButtonAccept;
     //textButtonCancel: string;
+    */
 
-    _getButton(): RadioButton {
+    _getButton() {
         return;
     }
 
-    constructor(
-        props: Properties<ListPreferenceComponent> & { onSelect?: any }
-    ) {
+    constructor(props) {
         const onSelect = props.onSelect;
 
         super(props);
@@ -40,18 +29,16 @@ export class ListPreferenceComponent extends Checked {
             if (this.entries && this.entries.length > 0) {
                 modal.addView(
                     ...this.entries.map((entry, index) => {
-                        const radio = RadioButton({
+                        const radio = new RadioButton({
                             text: entry.text,
                             checked:
                                 entry.checked ??
                                 parseInt(getValuePreference(this.key)) ===
                                     index,
-                            layoutData: {
-                                top: [LayoutData.prev, 5],
-                                left: 0,
-                                right: 0,
-                            },
-                        }).onSelect((e: RadioButtonSelectEvent) => {
+                            top: 'prev() 5',
+                            left: 0,
+                            right: 0,
+                        }).onSelect((e) => {
                             if (e.checked) {
                                 setPreference(this.key, index);
                                 typeof onSelect === "function" &&

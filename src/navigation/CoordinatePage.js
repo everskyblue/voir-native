@@ -1,38 +1,22 @@
 import {
-    type EventObject,
-    type AnyWidget,
-    type WidgetCollection,
     NavigationView,
-    drawer,
     Page,
-    Action,
-    Properties as PropertiesTabris,
     SearchAction,
-    CompositeAddChildEvent,
-    Widget,
     NativeObject,
-    Properties,
-    Listeners
+    WidgetCollection,
+    Action
 } from "tabris";
+import { drawer, Listeners } from "../support";
 import { createProxies } from "../utils/proxy";
 import { createInstance } from "../utils/helpers";
 import { customEvent } from "../utils/custom-events";
-import { type MenuItemOption, type MenuItemOf, setMenuDrawer, setContentDrawer, MenuItem, MenuAction } from "./menu";
+import { setMenuDrawer, setContentDrawer, MenuItem, MenuAction } from "./menu";
 
-type FirstExecAction = {
-    actions: Array<Action | SearchAction> | null;
-    hidden: boolean;
-    isDisposed: boolean;
-};
-
-type TypeChild = Action | SearchAction | Page;
-
-type TypeWidget = any[] | Array<any[]>;
 
 /**
  * guarda el contexto de pagina
  */
-const ctxPages = new Map<Page, FirstExecAction>();
+const ctxPages = new Map();
 
 /**
  * @description
@@ -43,34 +27,33 @@ const ctxPages = new Map<Page, FirstExecAction>();
  * haciendo que la nueva pagina no tenga los menus anteriores
  */
 export class CoordinatePageComponent extends NavigationView {
-    private _dataMenuDrawer!: any;
-    private _contentDrawer!: any;
-    onActionSelected?: any;
-    onDrawerItemSelected?: any;
+    onActionSelected;
+    onDrawerItemSelected;
 
-    static readonly events = ['actionSelected', 'drawerItemSelected'];
+    static events = ['actionSelected', 'drawerItemSelected'];
 
-    set contentDrawer(view: Widget) {
+    set contentDrawer(view) {
         this._contentDrawer = view;
     }
 
     get contentDrawer() {
-        return this._contentDrawer;
+        return this._contentDrawer ?? new WidgetCollection();
     }
 
-    set menuDrawer(menu: WidgetCollection<MenuItem>) {
+    set menuDrawer(menu) {
         this._dataMenuDrawer = menu.toArray();
     }
 
-    get menuDrawer(): WidgetCollection<MenuItem> {
-        return this._dataMenuDrawer;
+    get menuDrawer() {
+        return this._dataMenuDrawer ?? [];
     }
 
-    constructor(props: any) {
+    constructor(props) {
         super(props);
+        this.$actions = [];
     }
 
-    private readonly _renderWidgetInDrawer = (() => {
+    _renderWidgetInDrawer = (() => {
         let isAdd = false;
         return () => {
             if (isAdd) return;
@@ -86,16 +69,14 @@ export class CoordinatePageComponent extends NavigationView {
         }
     })();
 
-    on(type: string, listener: (event: EventObject<NativeObject>) => any, context?: object): this;
-    on(listeners: { [event: string]: (event: EventObject<NativeObject>) => void; }): this;
-    on(type: any, listener?: any, context?: any): this {
+    on(type, listener, context) {
         if (typeof type === 'string' && CoordinatePageComponent.events.includes(type)) {
             customEvent.addListener(this, type, listener);
         }
         return super.on(type, listener, context);
     }
 
-    protected _addChild(child: Widget): void {
+    _addChild(child) {
         customEvent.listener(this, child);
         if (child instanceof Page) {
             ctxPages.set(child, {
@@ -119,6 +100,7 @@ export class CoordinatePageComponent extends NavigationView {
 
             child.on("disappear", () => {
                 const info = ctxPages.get(child);
+                //console.log(this.children(Action).toArray().length)
                 setChangeEnabledDrawer(false);
                 if (!info.hidden) {
                     info.hidden = true;
@@ -133,27 +115,28 @@ export class CoordinatePageComponent extends NavigationView {
             });
         }
 
-        const setChangeEnabledDrawer = (enable: boolean) => {
+        const setChangeEnabledDrawer = (enable) => {
             if (this?.drawerActionVisible) drawer.enabled = enable;
         }
 
-        return super._addChild(child);
+        //@ts-ignore
+        return typeof super._addChild==='function' ?  super._addChild(child) : this;
     }
 
-    append(...widgets: TypeWidget) {
+    append(...widgets) {
         const sup = super.append(...widgets);
         setTimeout(() => resolveParameter(widgets), 0);
         return sup;
     }
 }
 
-function fillExecAction(widgets: TypeWidget) {
-    const page: Page = widgets.find(
-        (widget: TypeChild) => widget instanceof Page
+function fillExecAction(widgets) {
+    const page = widgets.find(
+        (widget) => widget instanceof Page
     );
 
     const actions = widgets.filter(
-        (widget: TypeChild) => {
+        (widget) => {
             if (widget instanceof Action || widget instanceof SearchAction) {
                 return widget.data.voirInitializedEvent = true;
             }
@@ -170,14 +153,14 @@ function fillExecAction(widgets: TypeWidget) {
     return info;
 }
 
-function resolveParameter($widgets: TypeWidget) {
+function resolveParameter($widgets) {
     let widgets =
         $widgets.length > 1
             ? $widgets
             : Array.isArray($widgets[0])
                 ? $widgets.shift()
                 : $widgets;
-    if (widgets.some((widget: TypeChild) => Array.isArray(widget)))
+    if (widgets.some((widget) => Array.isArray(widget)))
         throw new Error("error parameter");
     if (Array.isArray(widgets) && widgets.length > 0)
         return fillExecAction(widgets);

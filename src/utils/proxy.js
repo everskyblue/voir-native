@@ -1,9 +1,4 @@
-import { Constructor } from "tabris";
-
-type Callback<T> = Constructor<T> | (() => T);
-type Handler<T> =  (new ()=> T) & (()=> T)
-
-export function createProxies<T>(component: Constructor<T>) {
+export function createProxies(component) {
     const ProxiesCallback = new Proxy(
         component,
         {
@@ -19,8 +14,8 @@ export function createProxies<T>(component: Constructor<T>) {
     return ProxiesCallback;
 }
 
-export function factory<T>(fac: Callback<T>): Handler<T> {
-    const handler: ProxyHandler<typeof fac> = {
+export function factory(fac) {
+    const handler = {
         get(target, p, receiver) {
             return Reflect.get(target, p, receiver);
         },
@@ -31,5 +26,5 @@ export function factory<T>(fac: Callback<T>): Handler<T> {
             return Reflect.apply(null, target, argArray);
         }
     }
-   return  new Proxy(fac, handler) as unknown as Handler<T>;
+   return  new Proxy(fac, handler);
 }

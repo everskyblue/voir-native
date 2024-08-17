@@ -1,4 +1,4 @@
-import { Listeners } from "tabris";
+import { Listeners } from "../support";
 
 const events = new Map();
 

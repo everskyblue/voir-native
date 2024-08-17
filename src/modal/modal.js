@@ -1,37 +1,29 @@
 import {
     Button,
-    Color,
     Composite,
-    EventObject,
-    LayoutData,
-    Listeners,
     ScrollView,
     TextView,
-    contentView,
-    Widget,
-    AnyWidget,
-    Properties,
+    EventObject
 } from "tabris";
+import { Listeners, layoutData, isVersion2, contentView } from "../support";
 import { animateHidden, animateShow } from "./animation";
 
-class EventModal extends EventObject<any> {}
+class EventModal extends EventObject {}
 
 export default class Modal {
-    [k: string]: any;
-
-    remove: () => any;
+    /*remove: () => {};
     show: () => any;
-    setButtonAccept: (text: string) => Listeners<{ target: Button }>;
-    setButtonCancel: (text: string) => Listeners<{ target: Button }>;
-    addView: (...view: Widget<any>[]) => any;
+    setButtonAccept: (text: string) => typeof Listeners<{ target: Button }>;
+    setButtonCancel: (text: string) => typeof Listeners<{ target: Button }>;
+    addView: (...view: Widget[]) => any;
     removeView: () => any;
-    removeButtons: () => any;
-
-    constructor(attrs: any = {}) {
-        const buttons: Button[] = [];
+    removeButtons: () => any;*/
+    
+    constructor(attrs = {}) {
+        const buttons = [];
         //- iteracion
-        let buttonListenerAccept: Listeners<{ target: Button }>;
-        let buttonListenerCancel: Listeners<{ target: Button }>;
+        let buttonListenerAccept;
+        let buttonListenerCancel;
 
         let isAddButtons = false;
         let isDetach = false;
@@ -39,12 +31,12 @@ export default class Modal {
 
         // ui size
         const { width: contentWidth } = contentView.bounds;
-        const { screenWidth: deviceWidth } = device;
+        const { screenWidth: deviceWidth } = tabris.device;
         const maxSize = 560;
 
-        const properties_modal_container: Properties<Composite> = {
+        const properties_modal_container = {
             elevation: 24,
-            centerY: true,
+            centerY: layoutData.centerY,
             padding: 10,
             cornerRadius: 5,
             opacity: 0,
@@ -64,14 +56,11 @@ export default class Modal {
         }
 
         const modalWrap = new Composite({
-            left: 0,
-            right: 0,
-            top: 0,
-            bottom: 0,
+            ...layoutData.stretch,
             opacity: 1,
             highlightOnTouch: false,
-            background: new Color(0, 0, 0, 50),
-        }).onTap((e: any) => e.preventDefault());
+            background: 'rgba(0, 0, 0, 0.50)',
+        }).onTap((e) => e.preventDefault());
 
         const modal_container = new Composite(
             properties_modal_container
@@ -92,20 +81,20 @@ export default class Modal {
 
         const modal_content = new Composite({
             top: "#modal-title",
-            bottom: LayoutData.prev,
-            right: 0,
-            left: 0,
+            bottom: 'prev()',
+            ...layoutData.stretchX
         });
 
         const modal_content_scrollable = new ScrollView({
-            layoutData: "stretchX",
+            layoutData: layoutData.stretchX,
+            id: 'modal_content_scrollable'
         }).appendTo(modal_content);
 
-        modal_container.onBoundsChanged(({ value }) => {
+        modal_container.on('boundsChanged', ({ value }) => {
             const { height: contentViewHeight } = contentView.bounds;
-
+            console.log(modal_container.layoutData)
             if (contentViewHeight < value.height) {
-                modal_container.layoutData = {
+                modal_container.set({
                     ...properties_modal_container,
                     height:
                         value.height > contentViewHeight
@@ -116,17 +105,18 @@ export default class Modal {
                             : maxSize > value.height
                             ? value.height
                             : maxSize,
-                };
-                modal_content.layoutData = {
-                    ...(modal_content.layoutData as any),
-                };
-                modal_content_scrollable.layoutData = "stretch";
+                });
+                console.log(modal_container.layoutData)
+                modal_content.set({
+                    ...(modal_content.layoutData),
+                });
+                modal_content_scrollable.set(layoutData.stretch);
             }
         });
 
         Object.defineProperty(this, "setButtonAccept", {
             configurable: false,
-            value: (text: string) => {
+            value: (text) => {
                 if (!buttonListenerAccept) {
                     buttonListenerAccept = createButton("accept", text);
                 }
@@ -136,7 +126,7 @@ export default class Modal {
 
         Object.defineProperty(this, "setButtonCancel", {
             configurable: false,
-            value: (text: string) => {
+            value: (text) => {
                 if (!buttonListenerCancel) {
                     buttonListenerCancel = createButton("cancel", text);
                 }
@@ -146,7 +136,7 @@ export default class Modal {
 
         Object.defineProperty(this, "addView", {
             configurable: false,
-            value: (...views: Widget<any>[]) =>
+            value: (...views) =>
                 modal_content_scrollable.append(views),
         });
 
@@ -157,7 +147,7 @@ export default class Modal {
                     isAddButtons = true;
                     modal_container.append(
                         new Composite({
-                            layoutData: "stretchX",
+                            layoutData: layoutData.stretchX,
                             id: "buttons-modal",
                             bottom: 0,
                         }).append(buttons)
@@ -204,16 +194,16 @@ export default class Modal {
             },
         });
 
-        function createButton(type: string, text: string) {
+        function createButton(type, text) {
             const btn = new Button({
                 text,
-                top: buttons.length === 0 ? "prev() 20" : "auto",
-                right: buttons.length === 0 ? 0 : "prev()",
+                top: "#modal_content_scrollable",
+                right: "prev()",
                 bottom: 0,
                 style: "text",
             });
-            const event = new Listeners<{ target: Button }>(btn, type);
-            btn.onTap(() => event.trigger(new EventModal()));
+            const event = new Listeners(btn, type);
+            btn.on('tap', () => event.trigger(new EventModal()));
             buttons.push(btn);
             return event;
         }

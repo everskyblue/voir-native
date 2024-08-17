@@ -1,9 +1,7 @@
-import type { Widget } from "tabris";
-
 export function animateShow(
-    element: Widget<any>,
-    delay: number,
-    duration: number
+    element,
+    delay,
+    duration
 ) {
     return element.animate(
         {
@@ -18,9 +16,9 @@ export function animateShow(
 }
 
 export function animateHidden(
-    element: Widget<any>,
-    delay: number,
-    duration: number
+    element,
+    delay,
+    duration
 ) {
     return element.animate(
         {
@@ -35,9 +33,9 @@ export function animateHidden(
 }
 
 export function animate(
-    element: Widget<any>,
-    delay: number,
-    duration: number
+    element,
+    delay,
+    duration
 ) {
     return Promise.resolve(animateShow(element, delay, 300)).then(()=> {
         return Promise.resolve(animateHidden(element, duration, duration));

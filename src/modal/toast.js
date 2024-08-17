@@ -1,25 +1,24 @@
 import {
     sizeMeasurement,
     TextView,
-    Composite,
-    contentView,
-    Properties,
+    Composite
 } from "tabris";
+import { contentView, isVersion2 } from "../support";
 import AnimationTime from "./animation-time";
 import { animate } from "./animation";
 
-let stackToast: ({element: Composite, promise: ()=> Promise<any>})[] = [];
+let stackToast = [];
 
 export default class Toast extends AnimationTime {
-    show: () => any;
+    show;
 
-    readonly _message = TextView({
+    _message = new TextView({
         textColor: "white",
         left: 0,
         right: 0,
     });
 
-    readonly _modal = Composite({
+    _modal = new Composite({
         background: "black",
         padding: 10,
         cornerRadius: 10,
@@ -27,23 +26,37 @@ export default class Toast extends AnimationTime {
         opacity: 0
     }).append(this._message);
 
-    constructor(message: string, duration: number) {
+    constructor(message, duration) {
         super();
 
         const font = "12px";
+        const left = 20;
+        const right = 20;
 
-        const size = sizeMeasurement.measureTextsSync([
+        const size = sizeMeasurement?.measureTextsSync([
             { text: message, font },
-        ]);
-
-        const isMax: boolean = size[0].width > contentView.bounds.width - 20;
-        const props: Properties<Composite> = {};
+        ]) ?? [{ width: -1, height: -1}];
+        
+        if (isVersion2) {
+            this._modal.once('boundsChanged', ({target, value: { width }}) => {
+                if (width > contentView.bounds.width) {
+                    target.set({
+                        left, 
+                        right, 
+                        centerX: undefined
+                    })
+                }
+            })
+        }
+        
+        const isMax = size[0].width > contentView.bounds.width - 20;
+        const props = {};
 
         if (isMax) {
-            this._modal.left = 20;
-            this._modal.right = 20;
+            this._modal.left = left;
+            this._modal.right = right;
         } else {
-            this._modal.centerX = true;
+            this._modal.centerX = isVersion2 ? 0 : true;
         }
         
         this._message.text = message;
@@ -74,7 +87,7 @@ export default class Toast extends AnimationTime {
 
         const flush = () => {
             if (stackToast.length === 0) return;
-            const { promise, element } = stackToast.at(0);
+            const { promise, element } = stackToast[0];
             promise().then(() => {
                 stackToast.shift();
                 element.dispose();
@@ -82,13 +95,13 @@ export default class Toast extends AnimationTime {
             }).catch(console.log);
         }
 
-        function appendToast(modal: Composite) {
+        function appendToast(modal) {
             contentView.append(modal);
             return animate(modal, 0, duration);
         }
     }
 
-    static makeText(msg: string, duration: number = Toast.SHORT) {
+    static makeText(msg, duration = Toast.SHORT) {
         return new Toast(msg, duration);
     }
 }
