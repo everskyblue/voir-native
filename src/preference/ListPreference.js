@@ -17,10 +17,7 @@ export class ListPreferenceComponent extends Checked {
     }
 
     constructor(props) {
-        const onSelect = props.onSelect;
-
         super(props);
-
         this.onSelect(() => {
             const modal = new Modal({
                 title: this.title.toCapitalize(),
@@ -41,8 +38,8 @@ export class ListPreferenceComponent extends Checked {
                         }).onSelect((e) => {
                             if (e.checked) {
                                 setPreference(this.key, index);
-                                typeof onSelect === "function" &&
-                                    onSelect.call(this, e);
+                                typeof this._customEvent.select === "function" &&
+                                    this._customEvent.select.call(this, e);
                             }
                         });
 

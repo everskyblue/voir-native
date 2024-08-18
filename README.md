@@ -7,6 +7,12 @@
 
 <br>
 
+> Now it supports tabris 2.9 you can download the development [apk here](https://apkpure.com/es/tabris-js-2/com.eclipsesource.tabrisjs2) 
+and for version 3.9 in the [play store](https://play.google.com/store/apps/details?id=com.eclipsesource.tabrisjs).
+go to [documentation 2.9.x & 3.9.x](https://docs.tabris.com/)
+
+<br>
+
 ## Documentation
 
 -   [video example](#video-example)

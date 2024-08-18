@@ -100,7 +100,6 @@ export class CoordinatePageComponent extends NavigationView {
 
             child.on("disappear", () => {
                 const info = ctxPages.get(child);
-                //console.log(this.children(Action).toArray().length)
                 setChangeEnabledDrawer(false);
                 if (!info.hidden) {
                     info.hidden = true;

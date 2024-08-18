@@ -5,7 +5,6 @@ import { layoutData } from "../support"
 export class Checked extends ItemPreference {
     constructor(props) {
         let checkButton;
-        const originalOnSelect = props.onSelect;
 
         props.onSelect = () =>
             checkButton && (checkButton.checked = !checkButton.checked);
@@ -19,18 +18,18 @@ export class Checked extends ItemPreference {
         });
 
         if (typeof checkButton !== "undefined") {
-            this.addListener(checkButton, originalOnSelect);
+            this.addListener(checkButton);
             this.append(checkButton);
         }
     }
 
-    addListener(checkButton, originalOnSelect) {
+    addListener(checkButton) {
         checkButton.on(
             "checkedChanged",
             e => {
                 setPreference(this.key, checkButton.checked);
-                typeof originalOnSelect === "function" &&
-                    originalOnSelect.call(this, e);
+                typeof this._customEvent.select === "function" &&
+                    this._customEvent.select.call(this, e);
             }
         );
     }

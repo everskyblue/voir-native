@@ -6,7 +6,6 @@ export class TextPreferenceComponent extends ItemPreference {
     constructor(props) {
         super(props)
     }
-
 }
 
 export const TextPreference = createProxies(TextPreferenceComponent);

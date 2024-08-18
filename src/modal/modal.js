@@ -92,7 +92,6 @@ export default class Modal {
 
         modal_container.on('boundsChanged', ({ value }) => {
             const { height: contentViewHeight } = contentView.bounds;
-            console.log(modal_container.layoutData)
             if (contentViewHeight < value.height) {
                 modal_container.set({
                     ...properties_modal_container,
@@ -106,7 +105,6 @@ export default class Modal {
                             ? value.height
                             : maxSize,
                 });
-                console.log(modal_container.layoutData)
                 modal_content.set({
                     ...(modal_content.layoutData),
                 });

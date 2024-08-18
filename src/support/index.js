@@ -3,21 +3,9 @@ import defineProperty from "../utils/define-property";
 
 const version = tabris.version.toString();
 export const isVersion2 = /(2\.9)\.*/.test(version);
-const isVersion3 = Number(version[0]) >= 3;
-
-if (!isVersion3 || !isVersion2) {
-    //throw new Error(`tabris ${version} not support`)
-}
-
-console.log(version,isVersion2,isVersion3)
+//const isVersion3 = Number(version[0]) >= 3;
 
 export const contentView = isVersion2 ? tabris.ui.contentView : tabris.contentView;
-
-if (!isVersion2) {
-    contentView.on = () => {
-        console.log("on app")
-    }
-}
 
 if (isVersion2) {
     global.$ = function $(props, children) {
@@ -157,10 +145,6 @@ export const Row = isVersion2 ?
             child[this._alignment] = 0;
             return super._addChild(child)
         }
-        
-        append(...childs) {
-            return super.append(...childs);
-        }
     } : tabris.Row;
 
 export const Listeners = isVersion2 ? class VListeners {
@@ -171,6 +155,10 @@ export const Listeners = isVersion2 ? class VListeners {
     
     addListener(handler) {
         this.target.on(this.event, handler);
+    }
+    
+    trigger(eventObject) {
+        return this.target.trigger(this.event, eventObject);
     }
 } : tabris.Listeners;
 

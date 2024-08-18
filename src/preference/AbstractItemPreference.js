@@ -21,12 +21,29 @@ const addEvent = (component) => (event) =>
 export default class ItemPreference
     extends Composite
 {
+    static typeEvents = ['select'];
+    
+    _customEvent = {};
+    
     set onSelect(fn) {
         addEvent(this)(fn);
     }
 
     get onSelect() {
         return addEvent(this);
+    }
+    
+    on(type, handler, ctx) {
+        if (typeof type === 'string' && ItemPreference.typeEvents.includes(type)) {
+            this._customEvent[type] = handler;
+        } else if (type instanceof Object) {
+            for (let key in type) {
+                if (ItemPreference.typeEvents.includes(key)) {
+                    this._customEvent[key] = type[key];
+                }
+            }
+        }
+        return super.on(type, handler, ctx);
     }
 
     constructor(props) {
