@@ -7,7 +7,7 @@ export default {
         target: 'es2015',
         outDir: 'dist',
         lib: {
-            entry: 'src/index.ts',
+            entry: 'src/index.js',
             formats: ['cjs'],
             fileName: 'index'
         },
