@@ -1,5 +1,5 @@
 import { RadioButton, Properties } from "tabris";
-import { Checked } from "./AbstractCheked";
+import { Checked } from "./AbstractChecked";
 export interface IEntry {
     id?: string;
     text: string;

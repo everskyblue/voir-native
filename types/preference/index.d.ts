@@ -1,4 +1,4 @@
-export * from './AbstractCheked';
+export * from './AbstractChecked';
 export { default as AbstractItemPreference } from './AbstractItemPreference';
 export * from './CheckBoxPreference';
 export * from './SwitchPreference';

@@ -1,8 +1,7 @@
-import { Properties } from "tabris";
-import { Checked } from "./AbstractCheked";
+import { Constructor, Properties, Switch, WidgetTapEvent } from "tabris";
+import { Checked } from "./AbstractChecked";
 export declare class SwitchPreferenceComponent extends Checked {
-    onChange: any;
     constructor(props: Properties<SwitchPreferenceComponent>);
-    _getButton(props: Properties<SwitchPreferenceComponent>): import("tabris").widgets.Switch;
+    _getButton(props: Properties<SwitchPreferenceComponent>): Switch;
 }
-export declare const SwitchPreference: import("tabris").Constructor<SwitchPreferenceComponent>;
+export declare const SwitchPreference: Constructor<SwitchPreferenceComponent>;
