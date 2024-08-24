@@ -1,6 +1,6 @@
 {
     "name": "voir-native",
-    "version": "0.5.1",
+    "version": "0.5.2",
     "description": "It is a framework to develop applications in a more controlled way with tabrisjs",
     "main": "dist/index.js",
     "scripts": {
