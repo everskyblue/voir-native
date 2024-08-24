@@ -1,6 +1,3 @@
-import tabris from "tabris";
-import defineProperty from "../utils/define-property";
-
 const version = tabris.version.toString();
 export const isVersion2 = /(2\.9)\.*/.test(version);
 //const isVersion3 = Number(version[0]) >= 3;

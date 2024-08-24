@@ -3,15 +3,18 @@ import { factory } from "./utils/proxy";
 import { contentView } from "./support";
 
 let navigation;
-
-contentView.on(
-    "addChild",
-    ({ child }) => {
-        if (child instanceof NavigationView && !navigation) {
-            navigation = child;
+try {
+    contentView.on(
+        "addChild",
+        ({ child }) => {
+            if (child instanceof NavigationView && !navigation) {
+                navigation = child;
+            }
         }
-    }
-);
+    );
+} catch (e) {
+    console.log(e)
+}
 
 export * from "./modal";
 export * from "./navigation";
